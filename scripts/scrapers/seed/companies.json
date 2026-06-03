@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Gateway",
+    "atsType": "recruitee",
+    "atsSlug": "gateway",
+    "website": "gateway.eu"
+  },
+  {
+    "name": "Hellebrekers",
+    "atsType": "recruitee",
+    "atsSlug": "hellebrekers",
+    "website": "hellebrekers.nl"
+  },
+  {
+    "name": "Feenstra",
+    "atsType": "recruitee",
+    "atsSlug": "feenstra",
+    "website": "feenstra.com"
+  },
+  {
+    "name": "Sioux",
+    "atsType": "recruitee",
+    "atsSlug": "sioux",
+    "website": "sioux.eu"
+  },
+  {
+    "name": "Voortman",
+    "atsType": "recruitee",
+    "atsSlug": "voortman",
+    "website": "voortman.net"
+  }
+]

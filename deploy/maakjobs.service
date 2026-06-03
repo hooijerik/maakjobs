@@ -1,0 +1,21 @@
+[Unit]
+Description=Maakjobs (Next.js)
+After=network.target
+
+[Service]
+Type=simple
+# Pas User en WorkingDirectory aan naar jouw situatie:
+User=www-data
+WorkingDirectory=/var/www/maakjobs
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=NEXT_PUBLIC_SITE_URL=https://maakjobs.nl
+# Secrets (RESEND_API_KEY, ALERTS_FROM_EMAIL, SUBMISSIONS_TO_EMAIL) - optional file, see .env.example:
+EnvironmentFile=-/var/www/maakjobs/.env
+# Roept de Next.js-server direct aan (robuuster dan via npm in systemd):
+ExecStart=/usr/bin/node /var/www/maakjobs/node_modules/next/dist/bin/next start --port 3000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
