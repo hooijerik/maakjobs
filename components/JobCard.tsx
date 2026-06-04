@@ -2,20 +2,14 @@ import Link from "next/link";
 import { CompanyLogo } from "./CompanyLogo";
 import { Chip } from "./ui";
 import { formatSalaryRange, timeAgo } from "@/lib/format";
-import { categoryLabel, seniorityLabel, workModeLabel } from "@/lib/taxonomy";
+import { categoryLabel, seniorityLabel } from "@/lib/taxonomy";
 import { categoryUrl, companyUrl, jobUrl, seniorityUrl, withLocale } from "@/lib/urls";
 import type { JobRow } from "@/lib/types";
 import type { Locale } from "@/lib/i18n/config";
 
-function locationText(job: JobRow, locale: Locale): string {
-  const country =
-    job.country === "NL" ? "Nederland" : job.country === "BE" ? "België" : null;
-  const base = job.city || job.province || country || job.location_raw || null;
-  if (job.work_mode === "remote")
-    return base ? `${workModeLabel("remote", locale)} · ${base}` : workModeLabel("remote", locale);
-  if (job.work_mode === "hybrid")
-    return base ? `${workModeLabel("hybrid", locale)} · ${base}` : workModeLabel("hybrid", locale);
-  return base || "-";
+function locationText(job: JobRow): string {
+  const country = job.country === "NL" ? "Nederland" : job.country === "BE" ? "België" : null;
+  return job.city || job.province || country || job.location_raw || "-";
 }
 
 export function JobCard({ job, locale }: { job: JobRow; locale: Locale }) {
@@ -47,7 +41,7 @@ export function JobCard({ job, locale }: { job: JobRow; locale: Locale }) {
                   {job.company_name}
                 </Link>
                 <span className="mx-1.5 text-slate-300">·</span>
-                {locationText(job, locale)}
+                {locationText(job)}
               </div>
             </div>
             <time className="shrink-0 whitespace-nowrap text-xs text-slate-400">
@@ -62,7 +56,6 @@ export function JobCard({ job, locale }: { job: JobRow; locale: Locale }) {
             {job.seniority && (
               <Chip href={L(seniorityUrl(job.seniority))}>{seniorityLabel(job.seniority, locale)}</Chip>
             )}
-            {job.work_mode && <Chip>{workModeLabel(job.work_mode, locale)}</Chip>}
             {salary && <Chip tone="green">{salary}</Chip>}
             {job.ai_required ? <Chip tone="amber">AI</Chip> : null}
           </div>

@@ -7,7 +7,7 @@ import { CompanyLogo } from "@/components/CompanyLogo";
 import { JobCard } from "@/components/JobCard";
 import { JsonLd } from "@/components/JsonLd";
 import { getJobBySlug, getRelatedJobs } from "@/lib/queries";
-import { categoryLabel, seniorityLabel, workModeLabel } from "@/lib/taxonomy";
+import { categoryLabel, seniorityLabel } from "@/lib/taxonomy";
 import { formatSalaryRange, formatDate, timeAgo, sanitizeHtml } from "@/lib/format";
 import { categoryUrl, companyUrl, locationUrl, seniorityUrl, withLocale } from "@/lib/urls";
 import { getDictionary, type Locale } from "@/lib/i18n";
@@ -41,15 +41,9 @@ function employmentType(raw: string | null): string | undefined {
   return undefined;
 }
 
-function locationLine(job: JobRow, locale: Locale): string {
-  const country =
-    job.country === "NL" ? "Nederland" : job.country === "BE" ? "België" : null;
-  const base = job.city || job.province || country || job.location_raw;
-  if (job.work_mode === "remote")
-    return base ? `${workModeLabel("remote", locale)} · ${base}` : workModeLabel("remote", locale);
-  if (job.work_mode === "hybrid")
-    return base ? `${workModeLabel("hybrid", locale)} · ${base}` : workModeLabel("hybrid", locale);
-  return base || "-";
+function locationLine(job: JobRow, _locale: Locale): string {
+  const country = job.country === "NL" ? "Nederland" : job.country === "BE" ? "België" : null;
+  return job.city || job.province || country || job.location_raw || "-";
 }
 
 export async function generateMetadata({
@@ -160,7 +154,6 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
                 {categoryLabel(job.category, locale)}
               </Chip>
               {job.seniority && <Chip href={L(seniorityUrl(job.seniority))}>{seniorityLabel(job.seniority, locale)}</Chip>}
-              {job.work_mode && <Chip>{workModeLabel(job.work_mode, locale)}</Chip>}
               {salary && <Chip tone="green">{salary}</Chip>}
               {job.ai_required ? <Chip tone="amber">AI</Chip> : null}
             </div>
@@ -222,7 +215,6 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
               </Fact>
               <Fact label={dict.job.category}>{categoryLabel(job.category, locale)}</Fact>
               {job.seniority && <Fact label={dict.job.level}>{seniorityLabel(job.seniority, locale)}</Fact>}
-              {job.work_mode && <Fact label={dict.job.workMode}>{workModeLabel(job.work_mode, locale)}</Fact>}
               {salary && <Fact label={dict.job.salary}>{salary}</Fact>}
               {job.reports_to && <Fact label={dict.job.reportsTo}>{job.reports_to}</Fact>}
               <Fact label={dict.job.posted}>{formatDate(job.posted_at || job.first_seen_at, locale)}</Fact>
