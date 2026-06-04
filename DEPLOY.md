@@ -12,7 +12,7 @@ niet de gewone (PHP-)webhosting van Strato.
 ## Overzicht
 
 ```
-Internet ──► Nginx (443/80, SSL) ──► Next.js  (127.0.0.1:3000, systemd)
+Internet ──► Nginx (443/80, SSL) ──► Next.js  (127.0.0.1:3001, systemd)
                                          │  leest
                                          ▼
                                     data/maakjobs.db  ◄── scraper (cron) schrijft
@@ -96,7 +96,7 @@ sudo nano /etc/systemd/system/maakjobs.service   # zet User= en paden goed
 sudo systemctl daemon-reload
 sudo systemctl enable --now maakjobs
 sudo systemctl status maakjobs                    # moet "active (running)" zijn
-curl -I http://127.0.0.1:3000                     # moet 200 geven
+curl -I http://127.0.0.1:3001                     # moet 200 geven
 ```
 
 ## 6. Nginx reverse proxy + HTTPS
