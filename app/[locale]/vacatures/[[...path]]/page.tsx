@@ -56,15 +56,6 @@ function resolvePath(path: string[] | undefined, facets: Facets, locale: Locale,
   }
   const [seg, val] = path;
 
-  if (seg === "remote" && path.length === 1) {
-    return {
-      filter: { workMode: "remote" },
-      heading: b.headingRemote,
-      intro: b.introRemote,
-      crumbs: [home, vac, { label: dict.common.remote }],
-      canonical: "/vacatures/remote",
-    };
-  }
   if (seg === "categorie" && val) {
     if (!CATEGORY_BY_SLUG.get(val as never)) notFound();
     const label = categoryLabel(val, locale);

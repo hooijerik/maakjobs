@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui";
 import { SITE } from "@/lib/site";
 import { CATEGORIES, categoryLabel } from "@/lib/taxonomy";
-import { categoryUrl, locationUrl, remoteUrl, withLocale } from "@/lib/urls";
+import { categoryUrl, locationUrl, withLocale } from "@/lib/urls";
 import { Logo } from "@/components/site/Logo";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dict } from "@/lib/i18n/types";
@@ -44,11 +44,6 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dict }) {
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link href={L(remoteUrl())} className="hover:text-brand-700">
-                  {f.remoteJobs}
-                </Link>
-              </li>
             </ul>
           </div>
           <div>

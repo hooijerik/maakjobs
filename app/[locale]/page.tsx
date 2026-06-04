@@ -5,7 +5,7 @@ import { CompanyLogo } from "@/components/CompanyLogo";
 import { getStats, getFacets, listRecentShuffled, listCompanies } from "@/lib/queries";
 import { CATEGORIES, categoryLabel } from "@/lib/taxonomy";
 import { formatNumber } from "@/lib/format";
-import { categoryUrl, companyUrl, locationUrl, remoteUrl, withLocale } from "@/lib/urls";
+import { categoryUrl, companyUrl, locationUrl, withLocale } from "@/lib/urls";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +24,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const sortedCats = [...CATEGORIES]
     .filter((c) => c.slug !== "overig-techniek") // catch-all: not a featured pill
     .sort((a, b) => (catCount.get(b.slug) ?? 0) - (catCount.get(a.slug) ?? 0));
-  const remoteCount = facets.workMode.find((w) => w.key === "remote")?.count ?? 0;
 
   return (
     <>
@@ -68,13 +67,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
                 <span className="text-slate-400">{catCount.get(c.slug) ?? 0}</span>
               </Link>
             ))}
-            <Link
-              href={L(remoteUrl())}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-brand-300 hover:text-brand-700"
-            >
-              {dict.common.remote}
-              <span className="text-slate-400">{remoteCount}</span>
-            </Link>
           </div>
 
           <div className="mx-auto mt-10 grid max-w-2xl grid-cols-3 gap-4 text-center">
@@ -106,9 +98,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
                     {c.label} <span className="text-slate-400">{c.count}</span>
                   </Chip>
                 ))}
-                <Chip href={L(remoteUrl())} tone="brand">
-                  {dict.common.remote} <span className="text-brand-400">{remoteCount}</span>
-                </Chip>
               </div>
             </div>
 

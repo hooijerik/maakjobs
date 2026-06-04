@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Container, Card } from "@/components/ui";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { RangeChart, Donut } from "@/components/charts";
+import { RangeChart } from "@/components/charts";
 import { SalaryEstimator } from "@/components/SalaryEstimator";
 import { buildSalaryReport } from "@/lib/report";
 import { formatEURShort } from "@/lib/format";
@@ -61,7 +61,7 @@ export default async function SalaryReportPage({ params }: { params: Promise<{ l
       </div>
 
       {/* KPI cards */}
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <Card className="p-5">
           <div className="text-sm text-slate-500">{t.medianRange}</div>
           <div className="mt-1 text-2xl font-bold text-slate-900">
@@ -72,13 +72,6 @@ export default async function SalaryReportPage({ params }: { params: Promise<{ l
           <div className="text-sm text-slate-500">{t.disclosePct}</div>
           <div className="mt-1 text-2xl font-bold text-slate-900">{r.disclosureRate}%</div>
           <div className="text-xs text-slate-400">{t.discloseOf(r.disclosed, r.totalActive)}</div>
-        </Card>
-        <Card className="p-5">
-          <div className="text-sm text-slate-500">{t.aiPremium}</div>
-          <div className="mt-1 text-2xl font-bold text-slate-900">
-            {r.aiPremium.pct != null ? `${r.aiPremium.pct > 0 ? "+" : ""}${r.aiPremium.pct}%` : "-"}
-          </div>
-          <div className="text-xs text-slate-400">{t.aiPremiumSub}</div>
         </Card>
       </div>
 
@@ -102,33 +95,6 @@ export default async function SalaryReportPage({ params }: { params: Promise<{ l
         </Panel>
         <Panel title={t.byRegion} subtitle={t.byRegionSub}>
           <RangeChart data={r.byProvince} scaleMax={r.scaleMax} />
-        </Panel>
-      </div>
-
-      {/* AI premium + comp + equity */}
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <Panel title={t.aiPremium} subtitle={t.aiCompare}>
-          {r.aiPremium.withAI && r.aiPremium.withoutAI ? (
-            <RangeChart
-              data={[
-                { ...r.aiPremium.withAI, label: t.withAi },
-                { ...r.aiPremium.withoutAI, label: t.withoutAi },
-              ]}
-              scaleMax={r.scaleMax}
-            />
-          ) : (
-            <p className="text-sm text-slate-400">{t.tooLittleData}</p>
-          )}
-        </Panel>
-        <Panel title={t.compStructure} subtitle={t.compStructureSub}>
-          <Donut data={r.compStructure} />
-        </Panel>
-        <Panel title={t.equity} subtitle={t.equitySub}>
-          {r.equity.length ? (
-            <Donut data={r.equity} />
-          ) : (
-            <p className="text-sm text-slate-400">{t.tooLittleData}</p>
-          )}
         </Panel>
       </div>
 

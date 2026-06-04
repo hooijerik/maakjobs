@@ -13,7 +13,7 @@ const SALARY_PRESETS: [string, string][] = [
   ["90000", "€ 90k+"],
   ["120000", "€ 120k+"],
 ];
-const WORKMODE_KEYS = ["remote", "hybrid", "onsite"] as const;
+const WORKMODE_KEYS = ["onsite", "hybrid"] as const;
 const DATE_KEYS = ["1", "3", "7", "14", "30"] as const;
 
 function toggleUrl(active: ActiveParams, dim: keyof typeof PARAMS, value: string): string {

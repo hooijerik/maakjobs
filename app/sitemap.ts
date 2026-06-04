@@ -25,7 +25,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticPaths = [
     "/",
     "/vacatures",
-    "/vacatures/remote",
     "/bedrijven",
     "/locaties",
     "/inzichten",

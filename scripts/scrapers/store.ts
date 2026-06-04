@@ -70,6 +70,8 @@ export function upsertJob(raw: RawJob): UpsertResult {
   const cls = classify(raw);
   if (!cls.gtmRelevant) return "skipped-nongtm";
   if (!cls.location.nlRelevant) return "skipped-notnl";
+  // Remote roles don't fit a technical / maakindustrie board - drop them.
+  if (cls.workMode === "remote") return "skipped-nongtm";
 
   const db = getDb();
   const isAts = !AGGREGATORS.has(raw.source);
