@@ -11,13 +11,12 @@ export type CategorySlug =
   | "overig-techniek";
 
 export type SenioritySlug =
+  | "leerling"
   | "junior"
-  | "medior"
+  | "allround"
   | "senior"
-  | "manager"
-  | "director"
-  | "vp"
-  | "clevel";
+  | "voorman"
+  | "leidinggevend";
 
 export type WorkMode = "remote" | "hybrid" | "onsite";
 

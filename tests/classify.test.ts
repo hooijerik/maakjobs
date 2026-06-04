@@ -43,14 +43,20 @@ eq("software returns null", detectCategory("Backend Software Engineer"), null);
 eq("sales returns null", detectCategory("Account Executive"), null);
 
 // ---- seniority ----
-eq("senior", detectSeniority("Senior Onderhoudsmonteur"), "senior");
-eq("manager", detectSeniority("Manager Productie"), "manager");
-eq("director via head of", detectSeniority("Head of Engineering"), "director");
-eq("vp", detectSeniority("VP Operations"), "vp");
-eq("clevel", detectSeniority("Chief Operations Officer"), "clevel");
-eq("junior via stage", detectSeniority("Stagiair Werktuigbouw"), "junior");
-eq("no seniority", detectSeniority("Elektromonteur"), null);
-eq("senior manager is manager", detectSeniority("Senior Service Manager"), "manager");
+eq("leerling", detectSeniority("Leerling Servicemonteur"), "leerling");
+eq("bbl is leerling", detectSeniority("BBL: Constructiewerker"), "leerling");
+eq("stage is leerling", detectSeniority("Stage Elektrotechniek"), "leerling");
+eq("zij-instroom is leerling", detectSeniority("Monteur zij-instroom waterbehandeling"), "leerling");
+eq("junior", detectSeniority("Junior Monteur Installatietechniek"), "junior");
+eq("allround", detectSeniority("Allround Monteur Utiliteit"), "allround");
+eq("senior", detectSeniority("Senior Werkvoorbereider"), "senior");
+eq("eerste monteur is senior", detectSeniority("Eerste Monteur"), "senior");
+eq("voorman", detectSeniority("Voorman Elektrotechniek"), "voorman");
+eq("uitvoerder is leidinggevend", detectSeniority("Uitvoerder Installatietechniek"), "leidinggevend");
+eq("service manager is leidinggevend", detectSeniority("Service Manager"), "leidinggevend");
+eq("no seniority", detectSeniority("Cv-monteur"), null);
+eq("werkvoorbereider is not voorman", detectSeniority("Werkvoorbereider"), null);
+eq("senior voorman is voorman", detectSeniority("Senior Voorman"), "voorman");
 
 // ---- relevance gate ----
 check("software engineer excluded", classify(job("Senior Backend Software Engineer")).gtmRelevant === false);
