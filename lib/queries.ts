@@ -310,3 +310,14 @@ export function getProvinceFacets(lang?: "nl" | "en"): { province: string; count
     )
     .all(...p) as unknown as { province: string; count: number }[];
 }
+
+/** Top cities by active-job count (lightweight; used for the footer quick links). */
+export function getTopCities(limit = 8): Facet[] {
+  return getDb()
+    .prepare(
+      `SELECT city_slug AS key, city AS label, COUNT(*) AS count FROM jobs
+       WHERE status='active' AND city_slug IS NOT NULL AND city_slug != ''
+       GROUP BY city_slug ORDER BY count DESC LIMIT ?`,
+    )
+    .all(limit) as unknown as Facet[];
+}

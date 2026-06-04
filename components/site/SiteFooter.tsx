@@ -3,21 +3,21 @@ import { Container } from "@/components/ui";
 import { SITE } from "@/lib/site";
 import { CATEGORIES, categoryLabel } from "@/lib/taxonomy";
 import { categoryUrl, locationUrl, withLocale } from "@/lib/urls";
+import { getTopCities } from "@/lib/queries";
 import { Logo } from "@/components/site/Logo";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dict } from "@/lib/i18n/types";
 
-const CITIES = [
-  ["Amsterdam", "amsterdam"],
-  ["Rotterdam", "rotterdam"],
-  ["Utrecht", "utrecht"],
-  ["Den Haag", "den-haag"],
-  ["Eindhoven", "eindhoven"],
-];
-
 export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dict }) {
   const L = (path: string) => withLocale(locale, path);
   const f = dict.footer;
+  // Top locations by active-job count - same source as the filter sidebar.
+  let cities: { key: string; label?: string }[] = [];
+  try {
+    cities = getTopCities(8);
+  } catch {
+    /* DB may be empty at build time */
+  }
   return (
     <footer className="mt-16 border-t border-slate-200 bg-white">
       <Container className="py-12">
@@ -37,10 +37,10 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dict }) {
           <div>
             <h3 className="text-sm font-semibold text-slate-900">{f.locations}</h3>
             <ul className="mt-3 space-y-2 text-sm text-slate-600">
-              {CITIES.map(([label, slug]) => (
-                <li key={slug}>
-                  <Link href={L(locationUrl(slug))} className="hover:text-brand-700">
-                    {f.cityLink(label)}
+              {cities.map((c) => (
+                <li key={c.key}>
+                  <Link href={L(locationUrl(c.key))} className="hover:text-brand-700">
+                    {f.cityLink(c.label || c.key)}
                   </Link>
                 </li>
               ))}
