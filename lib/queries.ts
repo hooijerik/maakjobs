@@ -188,7 +188,7 @@ export function getStats(lang?: "nl" | "en"): Stats {
     .get(...p) as { n: number };
   const w = db
     .prepare(
-      `SELECT COUNT(*) AS n FROM jobs WHERE status='active' AND first_seen_at >= datetime('now','-7 days')${langCond}`,
+      `SELECT COUNT(*) AS n FROM jobs WHERE status='active' AND COALESCE(posted_at, first_seen_at) >= datetime('now','-7 days')${langCond}`,
     )
     .get(...p) as { n: number };
   const c = db
