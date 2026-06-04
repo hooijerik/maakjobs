@@ -30,11 +30,17 @@ function logoFor(website?: string | null): string | null {
 
 export function upsertCompany(
   name: string,
-  opts: { website?: string | null; atsType?: AtsType | null; atsSlug?: string | null } = {},
+  opts: {
+    website?: string | null;
+    atsType?: AtsType | null;
+    atsSlug?: string | null;
+    logo?: string | null;
+  } = {},
 ): number {
   const db = getDb();
   const slug = slugify(name);
-  const logo = logoFor(opts.website);
+  // Prefer an explicit logo from the source (e.g. LinkedIn) over the website-derived favicon.
+  const logo = opts.logo || logoFor(opts.website);
   db.prepare(
     `INSERT OR IGNORE INTO companies (name, slug, website, ats_type, ats_slug, logo_url) VALUES (?,?,?,?,?,?)`,
   ).run(name, slug, opts.website ?? null, opts.atsType ?? null, opts.atsSlug ?? null, logo);
@@ -79,6 +85,7 @@ export function upsertJob(raw: RawJob): UpsertResult {
     website: raw.companyWebsite ?? null,
     atsType: isAts ? (raw.source as AtsType) : null,
     atsSlug: raw.companyHandle ?? null,
+    logo: raw.companyLogo ?? null,
   });
 
   const title = raw.title.trim();

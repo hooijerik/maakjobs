@@ -45,6 +45,8 @@ export interface RawJob {
   /** ATS slug / handle, when known (for company linking). */
   companyHandle?: string;
   companyWebsite?: string;
+  /** Direct company logo URL from the source (e.g. LinkedIn's media.licdn.com image). */
+  companyLogo?: string;
   title: string;
   /** Canonical posting URL on the source. */
   url: string;

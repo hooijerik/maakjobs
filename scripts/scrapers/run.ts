@@ -53,18 +53,40 @@ const AGGREGATORS: Record<string, { fetchJobs: (q: string) => Promise<RawJob[]> 
 };
 
 const AGG_QUERIES = [
+  // generiek
   "monteur",
   "technicus",
-  "installateur",
-  "elektromonteur",
-  "onderhoudsmonteur",
-  "servicemonteur",
+  "technisch specialist",
+  // werktuigbouw / metaal
   "werktuigbouwkundige",
   "lasser",
-  "mechatronica",
+  "cnc verspaner",
+  "bankwerker",
+  "plaatwerker",
+  "machinebouw",
+  // elektrotechniek
+  "elektromonteur",
+  "elektrotechnicus",
+  "paneelbouwer",
+  // installatie / klimaat
+  "installateur",
+  "cv-monteur",
+  "loodgieter",
+  "koeltechniek",
+  "ventilatiemonteur",
+  // onderhoud / service
+  "onderhoudsmonteur",
+  "servicemonteur",
+  "storingsmonteur",
+  "maintenance engineer",
+  // engineering / mechatronica / proces / productie
   "werkvoorbereider",
-  "cnc",
+  "constructeur",
+  "technisch tekenaar",
+  "mechatronica",
+  "plc programmeur",
   "procesoperator",
+  "machineoperator",
 ];
 
 interface Tally {

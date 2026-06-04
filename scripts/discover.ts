@@ -68,6 +68,35 @@ const CANDIDATES: Candidate[] = [
   { name: "Marel", website: "marel.com" },
   { name: "Demcon", website: "demcon.com" },
   { name: "Nedap", website: "nedap.com" },
+  // ---- More installatie / service / technical services ----
+  { name: "Actemium", website: "actemium.nl" },
+  { name: "Equans", website: "equans.nl" },
+  { name: "Strukton", website: "strukton.com" },
+  { name: "Mourik", website: "mourik.com" },
+  { name: "Stork", website: "stork.com" },
+  { name: "Kropman", website: "kropman.nl" },
+  { name: "Homij", website: "homij.nl" },
+  { name: "Verkley", website: "verkley.nl" },
+  { name: "Lomans", website: "lomans.nl" },
+  { name: "Coolmark", website: "coolmark.nl" },
+  { name: "Linthorst", slug: "linthorst", website: "linthorst.nl" },
+  // ---- More machinebouw / OEM / hightech ----
+  { name: "Lely", website: "lely.com" },
+  { name: "GEA", website: "gea.com" },
+  { name: "IHC", slug: "royalihc", website: "royalihc.com" },
+  { name: "Damen", slug: "damen", website: "damen.com" },
+  { name: "Norma Groep", slug: "normagroep", website: "norma.nl" },
+  { name: "Additive Industries", slug: "additiveindustries", website: "additiveindustries.com" },
+  { name: "Settels Savenije", slug: "sst", website: "sst.nl" },
+  { name: "Salland Engineering", slug: "sallandengineering", website: "salland.com" },
+  { name: "VDL ETG", slug: "vdletg", website: "vdletg.com" },
+  // ---- Engineering / consultancy with technical roles ----
+  { name: "Royal HaskoningDHV", slug: "royalhaskoningdhv", website: "royalhaskoningdhv.com" },
+  { name: "Iv-Groep", slug: "iv-groep", website: "iv-groep.nl" },
+  { name: "Movares", website: "movares.nl" },
+  { name: "Tauw", website: "tauw.com" },
+  { name: "Antea Group", slug: "anteagroup", website: "anteagroup.nl" },
+  { name: "Sweco", website: "sweco.nl" },
 ];
 
 async function mapLimit<T>(items: T[], limit: number, fn: (item: T) => Promise<void>): Promise<void> {

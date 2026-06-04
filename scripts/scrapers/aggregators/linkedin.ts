@@ -51,10 +51,14 @@ export async function fetchJobs(query: string): Promise<RawJob[]> {
       const id = jobIdFromUrl(href) || href;
       if (seen.has(id)) return;
       seen.add(id);
+      // LinkedIn lazy-loads the company logo via data-delayed-url; keep only the CDN image.
+      const logoRaw = ($li.find("img").attr("data-delayed-url") || $li.find("img").attr("src") || "").trim();
+      const companyLogo = /licdn\.com/.test(logoRaw) ? logoRaw : undefined;
       out.push({
         source: "linkedin",
         sourceId: id,
         companyName: company || "Onbekend",
+        companyLogo,
         title,
         url: href,
         locationRaw: location || "Netherlands",
