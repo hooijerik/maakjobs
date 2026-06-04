@@ -1,19 +1,19 @@
 import Link from "next/link";
 import { buildVacaturesUrl, PARAMS, withLocale } from "@/lib/urls";
-import { categoryLabel, seniorityLabel, workModeLabel } from "@/lib/taxonomy";
+import { categoryLabel, seniorityLabel } from "@/lib/taxonomy";
 import type { Facets } from "@/lib/queries";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dict } from "@/lib/i18n/types";
 
 export type ActiveParams = Partial<Record<keyof typeof PARAMS, string>>;
 
+// Trade salaries: only ~14% of jobs disclose pay, range ~€33k-€96k. Coarse buttons fit better than a slider.
 const SALARY_PRESETS: [string, string][] = [
+  ["40000", "€ 40k+"],
   ["50000", "€ 50k+"],
-  ["70000", "€ 70k+"],
-  ["90000", "€ 90k+"],
-  ["120000", "€ 120k+"],
+  ["60000", "€ 60k+"],
+  ["75000", "€ 75k+"],
 ];
-const WORKMODE_KEYS = ["onsite", "hybrid"] as const;
 const DATE_KEYS = ["1", "3", "7", "14", "30"] as const;
 
 function toggleUrl(active: ActiveParams, dim: keyof typeof PARAMS, value: string): string {
@@ -101,18 +101,6 @@ export function FilterSidebar({
         ))}
       </Group>
 
-      <Group title={f.workMode}>
-        {WORKMODE_KEYS.map((v) => (
-          <Opt
-            key={v}
-            dim="workMode"
-            value={v}
-            label={workModeLabel(v, locale)}
-            count={facets.workMode.find((x) => x.key === v)?.count}
-          />
-        ))}
-      </Group>
-
       <Group title={f.posted}>
         {DATE_KEYS.map((v) => (
           <Opt key={v} dim="datePosted" value={v} label={dateLabel[v]} />
@@ -132,11 +120,6 @@ export function FilterSidebar({
           ))}
         </Group>
       )}
-
-
-      <Group title={f.other}>
-        <Opt dim="ai" value="1" label={f.aiRoles} />
-      </Group>
     </div>
   );
 }
