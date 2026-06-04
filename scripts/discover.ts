@@ -35,7 +35,6 @@ type Candidate = { name: string; slug?: string; website?: string };
 const CANDIDATES: Candidate[] = [
   // ---- Technical staffing / detachering (often Recruitee/Homerun) ----
   { name: "Continu", website: "continu.nl" },
-  { name: "Tide", website: "tide.nl" },
   { name: "Maandag", website: "maandag.nl" },
   { name: "Itaq", website: "itaq.nl" },
   { name: "Tense", website: "tense.nl" },

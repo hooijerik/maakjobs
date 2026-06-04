@@ -28,5 +28,35 @@
     "atsType": "recruitee",
     "atsSlug": "voortman",
     "website": "voortman.net"
+  },
+  {
+    "name": "Stork",
+    "atsType": "ashby",
+    "atsSlug": "stork",
+    "website": "stork.com"
+  },
+  {
+    "name": "Linthorst",
+    "atsType": "recruitee",
+    "atsSlug": "linthorst",
+    "website": "linthorst.nl"
+  },
+  {
+    "name": "Movares",
+    "atsType": "recruitee",
+    "atsSlug": "movares",
+    "website": "movares.nl"
+  },
+  {
+    "name": "Antea Group",
+    "atsType": "recruitee",
+    "atsSlug": "anteagroup",
+    "website": "anteagroup.nl"
+  },
+  {
+    "name": "Sweco",
+    "atsType": "recruitee",
+    "atsSlug": "sweco",
+    "website": "sweco.nl"
   }
 ]
