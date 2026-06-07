@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Container, Card } from "@/components/ui";
 import { AlertForm } from "@/components/AlertForm";
 import { CATEGORIES, SENIORITY, categoryLabel, seniorityLabel } from "@/lib/taxonomy";
-import { ORIGIN_CITIES } from "@/lib/geo";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { alternates } from "@/lib/i18n/meta";
 
@@ -29,7 +28,7 @@ export default async function AlertPage({ params }: { params: Promise<{ locale: 
       </div>
 
       <Card className="mx-auto mt-8 max-w-lg p-6">
-        <AlertForm t={dict.forms.alert} categories={categories} seniorities={seniorities} cities={ORIGIN_CITIES} />
+        <AlertForm t={dict.forms.alert} categories={categories} seniorities={seniorities} />
         <ul className="mt-5 space-y-2 text-sm text-slate-500">
           {dict.alertPage.bullets.map((b, i) => (
             <li key={i}>✓ {b}</li>

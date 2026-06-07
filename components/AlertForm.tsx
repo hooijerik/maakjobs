@@ -9,24 +9,22 @@ const SALARY_OPTIONS: [string, string][] = [
   ["60000", "€ 60k+"],
   ["75000", "€ 75k+"],
 ];
-const RADII = [10, 25, 50, 75, 100] as const;
+const RADII = [5, 10, 25, 50, 75, 100] as const;
 
 export function AlertForm({
   t,
   categories,
   seniorities,
-  cities,
 }: {
   t: Dict["forms"]["alert"];
   categories: { slug: string; label: string }[];
   seniorities: { slug: string; label: string }[];
-  cities: { slug: string; label: string }[];
 }) {
   const [email, setEmail] = useState("");
   const [category, setCategory] = useState("");
   const [seniority, setSeniority] = useState("");
-  const [near, setNear] = useState("");
-  const [radius, setRadius] = useState("0");
+  const [postcode, setPostcode] = useState("");
+  const [radius, setRadius] = useState("25");
   const [salary, setSalary] = useState("");
   const [frequency, setFrequency] = useState("daily");
   const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
@@ -42,8 +40,8 @@ export function AlertForm({
           email,
           category: category || undefined,
           seniority: seniority || undefined,
-          near: near || undefined,
-          radiusKm: near && radius !== "0" ? Number(radius) : undefined,
+          postcode: postcode.trim() || undefined,
+          radiusKm: postcode.trim() ? Number(radius) : undefined,
           salaryMin: salary ? Number(salary) : undefined,
           frequency,
         }),
@@ -97,31 +95,27 @@ export function AlertForm({
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={labelCls}>{t.fieldLocation}</label>
-          <select
-            value={near}
-            onChange={(e) => {
-              setNear(e.target.value);
-              if (!e.target.value) setRadius("0");
-            }}
+          <input
+            type="text"
+            inputMode="numeric"
+            autoComplete="postal-code"
+            value={postcode}
+            onChange={(e) => setPostcode(e.target.value)}
+            placeholder={t.postcodePlaceholder}
+            pattern="\s*[1-9][0-9]{3}\s?[A-Za-z]{0,2}\s*"
+            title={t.postcodeHint}
+            maxLength={8}
             className={field}
-          >
-            <option value="">{t.allLocations}</option>
-            {cities.map((c) => (
-              <option key={c.slug} value={c.slug}>
-                {c.label}
-              </option>
-            ))}
-          </select>
+          />
         </div>
         <div>
           <label className={labelCls}>{t.fieldDistance}</label>
           <select
             value={radius}
             onChange={(e) => setRadius(e.target.value)}
-            disabled={!near}
+            disabled={!postcode.trim()}
             className={`${field} disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400`}
           >
-            <option value="0">{t.distanceExact}</option>
             {RADII.map((km) => (
               <option key={km} value={km}>
                 +{km} km

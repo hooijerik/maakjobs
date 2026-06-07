@@ -1,6 +1,6 @@
 import { addSubscriber } from "@/lib/mutations";
 
-const RADII = new Set([0, 10, 25, 50, 75, 100]);
+const RADII = new Set([5, 10, 25, 50, 75, 100]);
 
 export async function POST(req: Request) {
   try {
@@ -10,11 +10,15 @@ export async function POST(req: Request) {
     const filters: Record<string, string | number> = {};
     if (body.category) filters.category = String(body.category);
     if (body.seniority) filters.seniority = String(body.seniority);
-    if (body.near) {
-      filters.near = String(body.near);
+
+    // Location is a Dutch postcode (PC4) + radius. Keep only the 4-digit prefix.
+    const pc = String(body.postcode ?? "").match(/[1-9]\d{3}/);
+    if (pc) {
+      filters.postcode = pc[0];
       const r = Number(body.radiusKm);
-      if (Number.isFinite(r) && RADII.has(r) && r > 0) filters.radiusKm = r;
+      filters.radiusKm = Number.isFinite(r) && RADII.has(r) ? r : 25;
     }
+
     const salary = Number(body.salaryMin);
     if (Number.isFinite(salary) && salary > 0) filters.salaryMin = salary;
 

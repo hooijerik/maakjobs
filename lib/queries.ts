@@ -2,7 +2,7 @@
 
 import { getDb } from "./db";
 import { slugify } from "./format";
-import { citySlugsWithin } from "./geo";
+import { citySlugsWithin, postcodeCitySlugsWithin } from "./geo";
 import { PROVINCES } from "./taxonomy";
 import type { CompanyRow, JobRow } from "./types";
 
@@ -15,7 +15,8 @@ export interface JobFilters {
   workMode?: string;
   city?: string; // city slug
   near?: string; // origin city slug for a radius search
-  radiusKm?: number; // radius around `near` in km (0/undefined = exact place)
+  postcode?: string; // origin postcode (PC4) for a radius search
+  radiusKm?: number; // radius around `near`/`postcode` in km (0/undefined = exact place)
   province?: string; // province display name
   country?: string;
   tool?: string;
@@ -54,6 +55,18 @@ function buildWhere(f: JobFilters): { sql: string; params: (string | number)[] }
       cond.push("j.city_slug = ?");
       params.push(f.near);
     }
+  }
+  if (f.postcode) {
+    // Postcode + distance: resolve the postcode to a point, then to in-range cities.
+    const slugs = postcodeCitySlugsWithin(f.postcode, f.radiusKm ?? 25);
+    if (slugs && slugs.length) {
+      cond.push(`j.city_slug IN (${slugs.map(() => "?").join(",")})`);
+      params.push(...slugs);
+    } else if (slugs) {
+      // Valid postcode but no known city within the radius — nothing matches.
+      cond.push("1 = 0");
+    }
+    // slugs === null -> unresolvable postcode, ignore the location filter.
   }
   if (f.province) (cond.push("j.province = ?"), params.push(f.province));
   if (f.country) (cond.push("j.country = ?"), params.push(f.country.toUpperCase()));

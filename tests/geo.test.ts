@@ -1,5 +1,14 @@
 // Lightweight test runner (no framework). Run with: npm test
-import { haversineKm, citySlugsWithin, isKnownPlace, ORIGIN_CITIES } from "../lib/geo";
+import {
+  haversineKm,
+  citySlugsWithin,
+  coordsWithin,
+  isKnownPlace,
+  ORIGIN_CITIES,
+  pc4,
+  postcodeCoords,
+  postcodeCitySlugsWithin,
+} from "../lib/geo";
 
 let pass = 0;
 const fails: string[] = [];
@@ -53,6 +62,35 @@ check(
 check(
   "every origin slug is geocoded",
   ORIGIN_CITIES.every((c) => citySlugsWithin(c.slug, 0) !== null),
+);
+
+// ---- postcode (PC4) resolution ----
+check("pc4 extracts from '5611 AB'", pc4("5611 AB") === "5611");
+check("pc4 extracts from '1011AB'", pc4("1011AB") === "1011");
+check("pc4 rejects junk", pc4("abc") === null);
+check(
+  "postcodeCoords resolves Eindhoven 5611",
+  (() => {
+    const c = postcodeCoords("5611");
+    return !!c && c[0] > 51.3 && c[0] < 51.6 && c[1] > 5.3 && c[1] < 5.6;
+  })(),
+);
+check("postcodeCoords unknown -> null", postcodeCoords("0000") === null);
+
+// whole chain: a city-centre postcode resolves to its own city
+const pcExact = (pc: string) => JSON.stringify(postcodeCitySlugsWithin(pc, 0));
+check("1011 -> Amsterdam", pcExact("1011") === JSON.stringify(["amsterdam"]));
+check("9711 -> Groningen", pcExact("9711") === JSON.stringify(["groningen"]));
+check("5611 -> Eindhoven", pcExact("5611") === JSON.stringify(["eindhoven"]));
+check("3011 -> Rotterdam", pcExact("3011") === JSON.stringify(["rotterdam"]));
+
+const pcNear = postcodeCitySlugsWithin("1011", 25) ?? [];
+check("25km around 1011 includes Amsterdam + Haarlem", pcNear.includes("amsterdam") && pcNear.includes("haarlem"));
+check("25km around 1011 excludes Groningen", !pcNear.includes("groningen"));
+check("unresolvable postcode -> null", postcodeCitySlugsWithin("0000", 25) === null);
+check(
+  "coordsWithin point radius -> nearest city",
+  JSON.stringify(coordsWithin(52.37, 4.9, 0)) === JSON.stringify(["amsterdam"]),
 );
 
 // ---- summary ----

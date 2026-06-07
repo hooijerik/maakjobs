@@ -3,6 +3,8 @@
 // with jobs.city_slug. Not exhaustive — a city absent here simply won't match a radius
 // query (the filter is optional, so that degrades gracefully).
 
+import { PC4_CENTROIDS } from "./pc4-centroids";
+
 export interface GeoCity {
   slug: string;
   label: string;
@@ -126,18 +128,57 @@ export function isKnownPlace(slug: string): boolean {
 }
 
 /**
- * City slugs within `km` of the origin (inclusive of the origin), for use in a
- * `city_slug IN (...)` clause.
- *  - km <= 0          -> just the origin (exact place)
- *  - origin unknown   -> null (caller should fall back to an exact-match filter)
+ * City slugs whose centroid lies within `km` of a lat/lng point.
+ *  - km <= 0 -> the single nearest city (so a point still resolves to one place)
+ *  - km > 0  -> every known city within the radius (may be empty in remote areas)
+ */
+export function coordsWithin(lat: number, lng: number, km: number): string[] {
+  if (!(km > 0)) {
+    let best = NL_CITIES[0];
+    let bestD = Infinity;
+    for (const c of NL_CITIES) {
+      const d = haversineKm(lat, lng, c.lat, c.lng);
+      if (d < bestD) (bestD = d), (best = c);
+    }
+    return [best.slug];
+  }
+  const out: string[] = [];
+  for (const c of NL_CITIES) {
+    if (haversineKm(lat, lng, c.lat, c.lng) <= km) out.push(c.slug);
+  }
+  return out;
+}
+
+/**
+ * City slugs within `km` of an origin city slug, for a `city_slug IN (...)` clause.
+ *  - km <= 0        -> just the origin (exact place)
+ *  - origin unknown -> null (caller should fall back to an exact-match filter)
  */
 export function citySlugsWithin(originSlug: string, km: number): string[] | null {
   const o = COORDS.get(originSlug);
   if (!o) return null;
   if (!(km > 0)) return [originSlug];
-  const out: string[] = [];
-  for (const c of NL_CITIES) {
-    if (haversineKm(o[0], o[1], c.lat, c.lng) <= km) out.push(c.slug);
-  }
-  return out.length ? out : [originSlug];
+  return coordsWithin(o[0], o[1], km);
+}
+
+/** First valid PC4 (4-digit, 1000-9999) prefix in a postcode-ish string, else null. */
+export function pc4(input: string): string | null {
+  const m = (input || "").match(/[1-9]\d{3}/);
+  return m ? m[0] : null;
+}
+
+/** Coordinates for a Dutch postcode at PC4 precision, or null if unknown/invalid. */
+export function postcodeCoords(input: string): [number, number] | null {
+  const p = pc4(input);
+  return p && PC4_CENTROIDS[p] ? PC4_CENTROIDS[p] : null;
+}
+
+/**
+ * City slugs within `km` of a postcode.
+ *  - null  -> the postcode can't be resolved (caller should ignore the filter)
+ *  - []    -> resolved, but no known city within the radius (caller -> match nothing)
+ */
+export function postcodeCitySlugsWithin(input: string, km: number): string[] | null {
+  const c = postcodeCoords(input);
+  return c ? coordsWithin(c[0], c[1], km) : null;
 }
