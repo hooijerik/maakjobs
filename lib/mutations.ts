@@ -12,7 +12,7 @@ export function isValidEmail(email: string): boolean {
 
 export async function addSubscriber(
   email: string,
-  filters?: Record<string, string>,
+  filters?: Record<string, string | number>,
   frequency = "daily",
 ): Promise<{ ok: boolean; error?: string }> {
   const clean = (email || "").trim().toLowerCase();

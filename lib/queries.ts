@@ -2,6 +2,7 @@
 
 import { getDb } from "./db";
 import { slugify } from "./format";
+import { citySlugsWithin } from "./geo";
 import { PROVINCES } from "./taxonomy";
 import type { CompanyRow, JobRow } from "./types";
 
@@ -13,6 +14,8 @@ export interface JobFilters {
   seniority?: string;
   workMode?: string;
   city?: string; // city slug
+  near?: string; // origin city slug for a radius search
+  radiusKm?: number; // radius around `near` in km (0/undefined = exact place)
   province?: string; // province display name
   country?: string;
   tool?: string;
@@ -40,6 +43,18 @@ function buildWhere(f: JobFilters): { sql: string; params: (string | number)[] }
   if (f.workMode) (cond.push("j.work_mode = ?"), params.push(f.workMode));
   if (f.remote) cond.push("j.work_mode = 'remote'");
   if (f.city) (cond.push("j.city_slug = ?"), params.push(f.city));
+  if (f.near) {
+    // Location + distance: expand the origin to all known city slugs within the radius.
+    const slugs = citySlugsWithin(f.near, f.radiusKm ?? 0);
+    if (slugs && slugs.length) {
+      cond.push(`j.city_slug IN (${slugs.map(() => "?").join(",")})`);
+      params.push(...slugs);
+    } else {
+      // Origin not in the coordinate table — fall back to an exact city-slug match.
+      cond.push("j.city_slug = ?");
+      params.push(f.near);
+    }
+  }
   if (f.province) (cond.push("j.province = ?"), params.push(f.province));
   if (f.country) (cond.push("j.country = ?"), params.push(f.country.toUpperCase()));
   if (f.company) (cond.push("c.slug = ?"), params.push(f.company));

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Container, Card } from "@/components/ui";
 import { AlertForm } from "@/components/AlertForm";
-import { CATEGORIES, categoryLabel } from "@/lib/taxonomy";
+import { CATEGORIES, SENIORITY, categoryLabel, seniorityLabel } from "@/lib/taxonomy";
+import { ORIGIN_CITIES } from "@/lib/geo";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { alternates } from "@/lib/i18n/meta";
 
@@ -15,6 +16,9 @@ export default async function AlertPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params;
   const dict = await getDictionary(locale);
   const categories = CATEGORIES.map((c) => ({ slug: c.slug, label: categoryLabel(c.slug, locale) }));
+  const seniorities = [...SENIORITY]
+    .sort((a, b) => a.order - b.order)
+    .map((s) => ({ slug: s.slug, label: seniorityLabel(s.slug, locale) }));
 
   return (
     <Container className="py-16">
@@ -25,7 +29,7 @@ export default async function AlertPage({ params }: { params: Promise<{ locale: 
       </div>
 
       <Card className="mx-auto mt-8 max-w-lg p-6">
-        <AlertForm t={dict.forms.alert} categories={categories} />
+        <AlertForm t={dict.forms.alert} categories={categories} seniorities={seniorities} cities={ORIGIN_CITIES} />
         <ul className="mt-5 space-y-2 text-sm text-slate-500">
           {dict.alertPage.bullets.map((b, i) => (
             <li key={i}>✓ {b}</li>
