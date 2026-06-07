@@ -142,6 +142,8 @@ export interface JobRow {
   first_seen_at: string;
   last_seen_at: string;
   status: "active" | "expired";
+  featured: number; // 0/1 — paid premium placement
+  featured_until: string | null; // ISO datetime; null = no expiry
   hash: string;
 }
 
@@ -156,6 +158,29 @@ export interface CompanyRow {
   hq_city: string | null;
   size: string | null;
   industry: string | null;
+  featured: number; // 0/1 — paid featured employer
+  featured_until: string | null; // ISO datetime; null = no expiry
+}
+
+export type PremiumKind = "job" | "company" | "combo";
+export type PremiumStatus = "lead" | "invoiced" | "paid" | "active" | "expired" | "cancelled";
+
+/** Row shape of the `premium_orders` table (paid placements / leads). */
+export interface PremiumOrderRow {
+  id: number;
+  kind: PremiumKind;
+  job_id: number | null;
+  company_id: number | null;
+  buyer_email: string | null;
+  company_name: string | null;
+  package: string | null;
+  amount_eur: number | null;
+  status: PremiumStatus;
+  starts_at: string | null;
+  expires_at: string | null;
+  stripe_invoice_id: string | null;
+  notes: string | null;
+  created_at: string;
 }
 
 export interface SeedCompany {

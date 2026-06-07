@@ -8,7 +8,7 @@ import { JobCard } from "@/components/JobCard";
 import { JsonLd } from "@/components/JsonLd";
 import { getJobBySlug, getRelatedJobs } from "@/lib/queries";
 import { categoryLabel, seniorityLabel } from "@/lib/taxonomy";
-import { formatSalaryRange, formatDate, timeAgo, sanitizeHtml } from "@/lib/format";
+import { formatSalaryRange, formatDate, timeAgo, sanitizeHtml, isFeatured } from "@/lib/format";
 import { categoryUrl, companyUrl, locationUrl, seniorityUrl, withLocale } from "@/lib/urls";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { alternates } from "@/lib/i18n/meta";
@@ -150,6 +150,11 @@ export default async function JobPage({ params }: { params: Promise<{ locale: Lo
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-1.5">
+              {isFeatured(job) && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-400 px-2.5 py-1 text-xs font-semibold text-amber-950">
+                  ★ Uitgelicht
+                </span>
+              )}
               <Chip tone="brand" href={L(categoryUrl(job.category))}>
                 {categoryLabel(job.category, locale)}
               </Chip>

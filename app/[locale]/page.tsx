@@ -2,9 +2,9 @@ import Link from "next/link";
 import { Container, Chip, Stat, SectionHeading, Card } from "@/components/ui";
 import { JobCard } from "@/components/JobCard";
 import { CompanyLogo } from "@/components/CompanyLogo";
-import { getStats, getFacets, listRecentShuffled, listCompanies } from "@/lib/queries";
+import { getStats, getFacets, listRecentShuffled, listCompanies, getFeaturedJobs } from "@/lib/queries";
 import { CATEGORIES, categoryLabel } from "@/lib/taxonomy";
-import { formatNumber } from "@/lib/format";
+import { formatNumber, isFeatured } from "@/lib/format";
 import { categoryUrl, companyUrl, locationUrl, withLocale } from "@/lib/urls";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
@@ -18,7 +18,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
 
   const stats = getStats();
   const facets = getFacets();
-  const latest = listRecentShuffled(8, 50);
+  const featured = getFeaturedJobs(3);
+  const featuredIds = new Set(featured.map((j) => j.id));
+  const latest = listRecentShuffled(8, 50).filter((j) => !featuredIds.has(j.id));
   const companies = listCompanies(14);
   const catCount = new Map(facets.categories.map((f) => [f.key, f.count]));
   const sortedCats = [...CATEGORIES]
@@ -81,6 +83,18 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
       <Container className="py-4">
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="min-w-0 lg:col-span-2">
+            {featured.length > 0 && (
+              <div className="mb-8">
+                <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-slate-900">
+                  <span className="text-amber-500">★</span> {t.featured}
+                </h2>
+                <div className="space-y-3">
+                  {featured.map((job) => (
+                    <JobCard key={job.id} job={job} locale={locale} />
+                  ))}
+                </div>
+              </div>
+            )}
             <SectionHeading title={t.latest} href={L("/vacatures")} linkLabel={t.viewAll} />
             <div className="space-y-3">
               {latest.map((job) => (
@@ -134,11 +148,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
             <Link
               key={c.id}
               href={L(companyUrl(c.slug))}
-              className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 transition hover:border-brand-300 hover:shadow-sm"
+              className={`flex items-center gap-3 rounded-xl border bg-white px-4 py-3 transition hover:shadow-sm ${
+                isFeatured(c) ? "border-amber-300 ring-1 ring-amber-200" : "border-slate-200 hover:border-brand-300"
+              }`}
             >
               <CompanyLogo src={c.logo_url} name={c.name} size={36} />
               <div className="min-w-0">
-                <div className="truncate font-medium text-slate-800">{c.name}</div>
+                <div className="truncate font-medium text-slate-800">
+                  {c.name}
+                  {isFeatured(c) && <span className="ml-1 text-amber-500" title="Uitgelicht">★</span>}
+                </div>
                 <div className="text-xs text-slate-500">{dict.companies.openRoles(c.open_count)}</div>
               </div>
             </Link>

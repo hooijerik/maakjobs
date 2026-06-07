@@ -12,7 +12,8 @@
     "fetch-logos": "tsx scripts/fetch-logos.ts",
     "salary-audit": "tsx scripts/salary-audit.ts",
     "test": "tsx tests/classify.test.ts && tsx tests/geo.test.ts",
-    "alerts:send": "tsx scripts/send-alerts.ts"
+    "alerts:send": "tsx scripts/send-alerts.ts",
+    "premiums:expire": "tsx scripts/expire-premiums.ts"
   },
   "dependencies": {
     "cheerio": "^1.2.0",

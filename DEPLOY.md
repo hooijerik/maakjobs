@@ -122,7 +122,8 @@ crontab -e
 Plak (pas het pad aan als je niet in `/var/www/maakjobs` zit):
 
 ```cron
-# Dagelijks vacatures verversen + opschonen, wekelijks logo's, dagelijks alerts
+# Premium-plaatsingen verlopen, vacatures verversen + opschonen, wekelijks logo's, dagelijks alerts
+15 5 * * * cd /var/www/maakjobs && /usr/bin/npm run premiums:expire >> /var/log/maakjobs.log 2>&1
 0 6 * * *  cd /var/www/maakjobs && /usr/bin/npm run scrape      >> /var/log/maakjobs.log 2>&1
 30 6 * * * cd /var/www/maakjobs && /usr/bin/npm run reclassify  >> /var/log/maakjobs.log 2>&1
 45 6 * * 1 cd /var/www/maakjobs && /usr/bin/npm run fetch-logos >> /var/log/maakjobs.log 2>&1

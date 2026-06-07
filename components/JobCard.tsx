@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CompanyLogo } from "./CompanyLogo";
 import { Chip } from "./ui";
-import { formatSalaryRange, timeAgo } from "@/lib/format";
+import { formatSalaryRange, timeAgo, isFeatured } from "@/lib/format";
 import { categoryLabel, seniorityLabel } from "@/lib/taxonomy";
 import { categoryUrl, companyUrl, jobUrl, seniorityUrl, withLocale } from "@/lib/urls";
 import type { JobRow } from "@/lib/types";
@@ -21,8 +21,13 @@ export function JobCard({ job, locale }: { job: JobRow; locale: Locale }) {
     job.salary_interval,
     locale,
   );
+  const featured = isFeatured(job);
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-brand-300 hover:shadow-sm sm:p-5">
+    <article
+      className={`rounded-2xl border bg-white p-4 transition hover:shadow-sm sm:p-5 ${
+        featured ? "border-amber-300 ring-1 ring-amber-200" : "border-slate-200 hover:border-brand-300"
+      }`}
+    >
       <div className="flex gap-4">
         <CompanyLogo src={job.company_logo} name={job.company_name} />
         <div className="min-w-0 flex-1">
@@ -50,6 +55,11 @@ export function JobCard({ job, locale }: { job: JobRow; locale: Locale }) {
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-1.5">
+            {featured && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-400 px-2 py-0.5 text-xs font-semibold text-amber-950">
+                ★ Uitgelicht
+              </span>
+            )}
             <Chip tone="brand" href={L(categoryUrl(job.category))}>
               {categoryLabel(job.category, locale)}
             </Chip>

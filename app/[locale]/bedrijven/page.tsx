@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui";
 import { CompanyLogo } from "@/components/CompanyLogo";
 import { listCompanies } from "@/lib/queries";
+import { isFeatured } from "@/lib/format";
 import { companyUrl, withLocale } from "@/lib/urls";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { alternates } from "@/lib/i18n/meta";
@@ -29,11 +30,16 @@ export default async function CompaniesPage({ params }: { params: Promise<{ loca
           <Link
             key={c.id}
             href={withLocale(locale, companyUrl(c.slug))}
-            className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-brand-300 hover:shadow-sm"
+            className={`flex items-center gap-3 rounded-xl border bg-white p-4 transition hover:shadow-sm ${
+              isFeatured(c) ? "border-amber-300 ring-1 ring-amber-200" : "border-slate-200 hover:border-brand-300"
+            }`}
           >
             <CompanyLogo src={c.logo_url} name={c.name} size={44} />
             <div className="min-w-0">
-              <div className="truncate font-semibold text-slate-900">{c.name}</div>
+              <div className="truncate font-semibold text-slate-900">
+                {c.name}
+                {isFeatured(c) && <span className="ml-1 text-amber-500" title="Uitgelicht">★</span>}
+              </div>
               <div className="text-sm text-slate-500">{dict.companies.openRoles(c.open_count)}</div>
             </div>
           </Link>

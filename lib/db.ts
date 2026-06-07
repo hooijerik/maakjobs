@@ -100,6 +100,25 @@ CREATE TABLE IF NOT EXISTS scrape_runs (
   updated INTEGER DEFAULT 0,
   errors_json TEXT
 );
+
+-- Paid premium placements (premium/featured vacancy + featured company). Durable
+-- record of leads/sales even in the manual/invoice flow; later filled by Stripe.
+CREATE TABLE IF NOT EXISTS premium_orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  kind TEXT NOT NULL,                              -- 'job' | 'company' | 'combo'
+  job_id INTEGER REFERENCES jobs(id),
+  company_id INTEGER REFERENCES companies(id),
+  buyer_email TEXT,
+  company_name TEXT,
+  package TEXT,
+  amount_eur REAL,
+  status TEXT NOT NULL DEFAULT 'lead',             -- lead|invoiced|paid|active|expired|cancelled
+  starts_at TEXT,
+  expires_at TEXT,
+  stripe_invoice_id TEXT,
+  notes TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 `;
 
 let _db: DatabaseSync | null = null;
@@ -117,12 +136,20 @@ export function getDb(): DatabaseSync {
   db.exec("PRAGMA busy_timeout = 5000;");
   db.exec("PRAGMA foreign_keys = ON;");
   db.exec(SCHEMA);
-  // Migration: add `lang` to existing DBs (schema uses CREATE TABLE IF NOT EXISTS).
-  const cols = db.prepare("PRAGMA table_info(jobs)").all() as { name: string }[];
-  if (!cols.some((c) => c.name === "lang")) {
-    db.exec("ALTER TABLE jobs ADD COLUMN lang TEXT NOT NULL DEFAULT 'nl'");
-  }
+  // Migrations: add columns to existing DBs (schema uses CREATE TABLE IF NOT EXISTS,
+  // which never alters an existing table). Each guard is idempotent.
+  const addColumn = (table: string, column: string, ddl: string) => {
+    const cols = db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[];
+    if (!cols.some((c) => c.name === column)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${ddl}`);
+  };
+  addColumn("jobs", "lang", "lang TEXT NOT NULL DEFAULT 'nl'");
+  // Paid premium placements: a featured flag + an optional expiry on jobs and companies.
+  addColumn("jobs", "featured", "featured INTEGER NOT NULL DEFAULT 0");
+  addColumn("jobs", "featured_until", "featured_until TEXT");
+  addColumn("companies", "featured", "featured INTEGER NOT NULL DEFAULT 0");
+  addColumn("companies", "featured_until", "featured_until TEXT");
   db.exec("CREATE INDEX IF NOT EXISTS idx_jobs_lang ON jobs(lang)");
+  db.exec("CREATE INDEX IF NOT EXISTS idx_jobs_featured ON jobs(featured)");
   _db = db;
   return db;
 }

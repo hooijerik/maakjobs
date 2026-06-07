@@ -9,6 +9,10 @@ import type { CompanyRow, JobRow } from "./types";
 const JOB_COLS = `j.*, c.name AS company_name, c.slug AS company_slug, c.logo_url AS company_logo`;
 const JOB_FROM = `FROM jobs j JOIN companies c ON c.id = j.company_id`;
 
+/** A paid placement counts as "currently featured" while the flag is set and not past expiry. */
+const FEATURED_JOB = `j.featured = 1 AND (j.featured_until IS NULL OR j.featured_until >= datetime('now'))`;
+const FEATURED_COMPANY = `c.featured = 1 AND (c.featured_until IS NULL OR c.featured_until >= datetime('now'))`;
+
 export interface JobFilters {
   category?: string;
   seniority?: string;
@@ -96,12 +100,14 @@ function buildWhere(f: JobFilters): { sql: string; params: (string | number)[] }
 }
 
 function sortClause(sort: SortKey | undefined): string {
+  // Paid featured jobs float to the top of every (filtered) listing, then the chosen order.
+  const featuredFirst = `(${FEATURED_JOB}) DESC`;
   switch (sort) {
     case "salary":
-      return "ORDER BY (j.salary_max_eur IS NULL), j.salary_max_eur DESC, COALESCE(j.posted_at, j.first_seen_at) DESC";
+      return `ORDER BY ${featuredFirst}, (j.salary_max_eur IS NULL), j.salary_max_eur DESC, COALESCE(j.posted_at, j.first_seen_at) DESC`;
     case "newest":
     default:
-      return "ORDER BY COALESCE(j.posted_at, j.first_seen_at) DESC, j.id DESC";
+      return `ORDER BY ${featuredFirst}, COALESCE(j.posted_at, j.first_seen_at) DESC, j.id DESC`;
   }
 }
 
@@ -131,6 +137,20 @@ export function listRecentShuffled(limit = 8, pool = 50, lang?: "nl" | "en"): Jo
          SELECT ${JOB_COLS} ${JOB_FROM} WHERE j.status='active'${langCond}
          ORDER BY COALESCE(j.posted_at, j.first_seen_at) DESC LIMIT ?
        ) ORDER BY RANDOM() LIMIT ?`,
+    )
+    .all(...params) as unknown as JobRow[];
+}
+
+/** Active, currently-featured (paid) jobs — newest first. Used for the homepage strip. */
+export function getFeaturedJobs(limit = 6, lang?: "nl" | "en"): JobRow[] {
+  const db = getDb();
+  const langCond = lang ? " AND j.lang = ?" : "";
+  const params = lang ? [lang, limit] : [limit];
+  return db
+    .prepare(
+      `SELECT ${JOB_COLS} ${JOB_FROM}
+       WHERE j.status='active' AND ${FEATURED_JOB}${langCond}
+       ORDER BY COALESCE(j.posted_at, j.first_seen_at) DESC LIMIT ?`,
     )
     .all(...params) as unknown as JobRow[];
 }
@@ -299,11 +319,24 @@ export function listCompanies(limit?: number, lang?: "nl" | "en"): CompanyWithCo
   const sql = `SELECT * FROM (
       SELECT c.*, (SELECT COUNT(*) FROM jobs j WHERE j.company_id = c.id AND j.status='active'${langCond}) AS open_count
       FROM companies c
-    ) WHERE open_count > 0 ORDER BY open_count DESC, name COLLATE NOCASE ${limit ? "LIMIT ?" : ""}`;
+    ) WHERE open_count > 0 ORDER BY (featured = 1 AND (featured_until IS NULL OR featured_until >= datetime('now'))) DESC, open_count DESC, name COLLATE NOCASE ${limit ? "LIMIT ?" : ""}`;
   const params: (string | number)[] = [];
   if (lang) params.push(lang);
   if (limit) params.push(limit);
   return db.prepare(sql).all(...params) as unknown as CompanyWithCount[];
+}
+
+/** Currently-featured (paid) employers — for the homepage employers row. Shown even with 0 open jobs. */
+export function getFeaturedCompanies(limit = 6): CompanyWithCount[] {
+  const db = getDb();
+  return db
+    .prepare(
+      `SELECT c.*, (SELECT COUNT(*) FROM jobs j WHERE j.company_id = c.id AND j.status='active') AS open_count
+       FROM companies c
+       WHERE ${FEATURED_COMPANY}
+       ORDER BY open_count DESC, name COLLATE NOCASE LIMIT ?`,
+    )
+    .all(limit) as unknown as CompanyWithCount[];
 }
 
 export function getCompanyBySlug(slug: string): CompanyWithCount | null {

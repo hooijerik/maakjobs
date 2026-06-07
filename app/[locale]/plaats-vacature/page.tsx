@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Container, Card } from "@/components/ui";
 import { EmployerForm } from "@/components/EmployerForm";
+import { PackagesGrid } from "@/components/PackagesGrid";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { alternates } from "@/lib/i18n/meta";
 
@@ -22,6 +23,13 @@ export default async function PostJobPage({ params }: { params: Promise<{ locale
           <EmployerForm t={dict.forms.employer} />
         </Card>
         <p className="mt-4 text-sm text-slate-500">{dict.postJob.atsNote}</p>
+      </div>
+      <div className="mt-16">
+        <PackagesGrid
+          title={dict.employers.packagesTitle}
+          subtitle={dict.employers.packagesSubtitle}
+          popularLabel={dict.employers.popularBadge}
+        />
       </div>
     </Container>
   );

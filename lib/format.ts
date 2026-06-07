@@ -15,6 +15,14 @@ export function slugify(input: string): string {
   return s || "x";
 }
 
+/** Whether a paid placement is currently active (flag set and not past its expiry). */
+export function isFeatured(item: { featured?: number | null; featured_until?: string | null }): boolean {
+  if (!item.featured) return false;
+  if (!item.featured_until) return true;
+  const t = Date.parse(item.featured_until.replace(" ", "T") + "Z");
+  return Number.isNaN(t) || t >= Date.now();
+}
+
 const nlNumber = new Intl.NumberFormat("nl-NL", { maximumFractionDigits: 0 });
 const enNumber = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
 

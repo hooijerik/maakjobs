@@ -52,6 +52,7 @@ export const nl = {
     statNew: "Nieuw deze week",
     statCompanies: "Bedrijven",
     latest: "Nieuwste vacatures",
+    featured: "Uitgelichte vacatures",
     viewAll: "Bekijk alle",
     popularLocations: "Populaire locaties",
     alertTitle: "Mis nooit een vacature",
@@ -236,10 +237,16 @@ export const nl = {
     interimPitch:
       "Zet tijdelijk een ervaren interim-technicus of -engineer in en houd de productie op gang terwijl je werft.",
     interimCta: "Meer over interim ↗",
+    packagesTitle: "Plaatsingsopties",
+    packagesSubtitle:
+      "Plaats je vacature gratis. Wil je meer zichtbaarheid? Kies een premium-plaatsing — we nemen contact op met een offerte.",
+    packageCta: "Aanvragen",
+    popularBadge: "Populair",
   },
   postJob: {
     title: "Plaats een vacature",
-    subtitle: "Vul onderstaand formulier in. Plaatsing is gratis tijdens onze beta.",
+    subtitle:
+      "De standaardplaatsing is gratis. Wil je bovenaan en uitgelicht? Bekijk de premium-opties onderaan.",
     atsNote:
       "Gebruik je een ATS (Greenhouse, Lever, Recruitee…)? Stuur de link naar je vacaturepagina, dan halen we de details automatisch op.",
   },
@@ -284,6 +291,7 @@ export const nl = {
       jobTitle: "Functietitel",
       jobUrl: "Link naar de vacature",
       message: "Bericht (optioneel)",
+      fieldPackage: "Ik heb interesse in",
       submit: "Vacature insturen",
       submitting: "Bezig…",
       error: "Er ging iets mis. Probeer opnieuw.",

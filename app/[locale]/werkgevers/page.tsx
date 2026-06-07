@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, Card } from "@/components/ui";
+import { PackagesGrid } from "@/components/PackagesGrid";
 import { countLongOpenJobs } from "@/lib/queries";
 import { withLocale } from "@/lib/urls";
 import { getDictionary, type Locale } from "@/lib/i18n";
@@ -51,6 +52,15 @@ export default async function EmployersPage({ params }: { params: Promise<{ loca
         ))}
       </div>
 
+      <div className="mt-16">
+        <PackagesGrid
+          title={e.packagesTitle}
+          subtitle={e.packagesSubtitle}
+          ctaLabel={e.packageCta}
+          ctaHref={withLocale(locale, "/plaats-vacature")}
+          popularLabel={e.popularBadge}
+        />
+      </div>
     </Container>
   );
 }

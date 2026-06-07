@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { PACKAGES } from "@/lib/packages";
 import type { Dict } from "@/lib/i18n/types";
 
 export function EmployerForm({ t }: { t: Dict["forms"]["employer"] }) {
@@ -9,11 +10,14 @@ export function EmployerForm({ t }: { t: Dict["forms"]["employer"] }) {
     jobUrl: "",
     jobTitle: "",
     message: "",
+    package: "standaard",
   });
   const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm({ ...form, [k]: e.target.value });
+  const set =
+    (k: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+      setForm({ ...form, [k]: e.target.value });
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -72,6 +76,17 @@ export function EmployerForm({ t }: { t: Dict["forms"]["employer"] }) {
         rows={3}
         className={input}
       />
+      <div>
+        <label className="mb-1 block text-xs font-medium text-slate-500">{t.fieldPackage}</label>
+        <select value={form.package} onChange={set("package")} className={input}>
+          {PACKAGES.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+              {p.price !== "Gratis" ? ` — ${p.price}` : ""}
+            </option>
+          ))}
+        </select>
+      </div>
       {status === "error" && <p className="text-sm text-red-600">{t.error}</p>}
       <button
         type="submit"
