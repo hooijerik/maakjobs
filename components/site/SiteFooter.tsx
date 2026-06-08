@@ -5,6 +5,7 @@ import { CATEGORIES, categoryLabel } from "@/lib/taxonomy";
 import { categoryUrl, locationUrl, withLocale } from "@/lib/urls";
 import { getTopCities } from "@/lib/queries";
 import { Logo } from "@/components/site/Logo";
+import { CookieSettingsLink } from "@/components/CookieSettingsLink";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dict } from "@/lib/i18n/types";
 
@@ -65,14 +66,22 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dict }) {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-slate-100 pt-6 text-sm text-slate-500 sm:flex-row sm:items-center">
-          <div className="flex flex-wrap items-center gap-2 text-slate-500">
-            <Logo locale={locale} />
-            <span>- {dict.meta.tagline}.</span>
+        <div className="mt-10 border-t border-slate-100 pt-6 text-sm text-slate-500">
+          <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-wrap items-center gap-2 text-slate-500">
+              <Logo locale={locale} />
+              <span>- {dict.meta.tagline}.</span>
+            </div>
+            <p className="flex flex-wrap items-center gap-1.5">
+              <span>© {SITE.name}. {f.collected}</span>
+            </p>
           </div>
-          <p className="flex flex-wrap items-center gap-1.5">
-            <span>© {SITE.name}. {f.collected}</span>
-          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-400">
+            <Link href={L("/voorwaarden")} className="hover:text-brand-700">{f.terms}</Link>
+            <Link href={L("/privacy")} className="hover:text-brand-700">{f.privacy}</Link>
+            <Link href={L("/cookies")} className="hover:text-brand-700">{f.cookies}</Link>
+            <CookieSettingsLink className="hover:text-brand-700">{f.cookiePrefs}</CookieSettingsLink>
+          </div>
         </div>
       </Container>
     </footer>

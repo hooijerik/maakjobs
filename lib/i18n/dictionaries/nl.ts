@@ -39,6 +39,10 @@ export const nl = {
     locations: "Locaties",
     cityLink: (label: string) => `technische vacatures ${label}`,
     remoteJobs: "Remote technische vacatures",
+    terms: "Algemene voorwaarden",
+    privacy: "Privacy",
+    cookies: "Cookies",
+    cookiePrefs: "Cookievoorkeuren",
   },
   home: {
     badge: (n: number) => `${n} nieuwe ${n === 1 ? "vacature" : "vacatures"} deze week`,
