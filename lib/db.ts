@@ -148,8 +148,12 @@ export function getDb(): DatabaseSync {
   addColumn("jobs", "featured_until", "featured_until TEXT");
   addColumn("companies", "featured", "featured INTEGER NOT NULL DEFAULT 0");
   addColumn("companies", "featured_until", "featured_until TEXT");
+  // Per-subscriber token for unsubscribe / preferences links; backfill existing rows.
+  addColumn("subscribers", "unsub_token", "unsub_token TEXT");
+  db.exec("UPDATE subscribers SET unsub_token = lower(hex(randomblob(16))) WHERE unsub_token IS NULL");
   db.exec("CREATE INDEX IF NOT EXISTS idx_jobs_lang ON jobs(lang)");
   db.exec("CREATE INDEX IF NOT EXISTS idx_jobs_featured ON jobs(featured)");
+  db.exec("CREATE INDEX IF NOT EXISTS idx_subscribers_token ON subscribers(unsub_token)");
   _db = db;
   return db;
 }

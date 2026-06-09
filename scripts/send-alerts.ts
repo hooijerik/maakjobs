@@ -5,7 +5,7 @@ import { listJobs } from "../lib/queries";
 import { SITE } from "../lib/site";
 import { formatSalaryRange } from "../lib/format";
 import { categoryLabel } from "../lib/taxonomy";
-import { sendEmail } from "../lib/email";
+import { sendEmail, alertEmailFooter, alertLinks } from "../lib/email";
 import type { JobRow } from "../lib/types";
 
 interface Sub {
@@ -13,10 +13,11 @@ interface Sub {
   email: string;
   filters_json: string | null;
   frequency: string;
+  unsub_token: string;
   last_sent_at: string | null;
 }
 
-function renderDigest(jobs: JobRow[]): string {
+function renderDigest(jobs: JobRow[], footer: string): string {
   const rows = jobs
     .map((j) => {
       const sal = formatSalaryRange(j.salary_min, j.salary_max, j.salary_currency, j.salary_interval);
@@ -30,14 +31,14 @@ function renderDigest(jobs: JobRow[]): string {
     <h2 style="color:#0f172a">Nieuwe technische vacatures</h2>
     <table style="width:100%;border-collapse:collapse">${rows}</table>
     <p style="margin-top:16px"><a href="${SITE.url}/vacatures" style="color:#6d28d9">Bekijk alle vacatures →</a></p>
-    <p style="color:#94a3b8;font-size:12px">Je ontvangt deze mail omdat je een vacature-alert hebt op ${SITE.name}.</p>
+    ${footer}
   </div>`;
 }
 
 async function main() {
   const db = getDb();
   const subs = db
-    .prepare("SELECT id, email, filters_json, frequency, last_sent_at FROM subscribers")
+    .prepare("SELECT id, email, filters_json, frequency, unsub_token, last_sent_at FROM subscribers")
     .all() as unknown as Sub[];
 
   if (subs.length === 0) {
@@ -56,10 +57,15 @@ async function main() {
       console.log(`${s.email}: geen nieuwe vacatures`);
       continue;
     }
+    const links = alertLinks(s.unsub_token);
     const res = await sendEmail({
       to: s.email,
       subject: `${fresh.length} nieuwe technische vacatures op ${SITE.name}`,
-      html: renderDigest(fresh),
+      html: renderDigest(fresh, alertEmailFooter(s.unsub_token)),
+      headers: {
+        "List-Unsubscribe": `<${links.oneClick}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
     });
     db.prepare("UPDATE subscribers SET last_sent_at = datetime('now') WHERE id = ?").run(s.id);
     console.log(`${s.email}: ${fresh.length} vacatures (${res})`);

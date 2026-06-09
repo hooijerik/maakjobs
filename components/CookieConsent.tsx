@@ -21,9 +21,9 @@ function writeConsent(v: "granted" | "denied") {
 }
 
 /**
- * AVG-compliant consent gate: analytics (GA4 + Microsoft Clarity) load ONLY after the
- * visitor clicks "Accepteren". The choice is stored in the mj_consent cookie; the footer
- * "Cookievoorkeuren" link re-opens the banner via a window event.
+ * Consent manager. Google Analytics is treated as essential and loads on every page.
+ * Microsoft Clarity is optional and loads only after the visitor clicks "Accepteren".
+ * The banner is a full-screen takeover so the choice is unmissable (also on mobile).
  */
 export function CookieConsent() {
   const [consent, setConsent] = useState<Consent>(null);
@@ -46,41 +46,51 @@ export function CookieConsent() {
 
   return (
     <>
+      {/* Google Analytics — essentieel, altijd geladen. */}
+      <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
+      <Script id="ga4-init" strategy="afterInteractive">
+        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}
+      </Script>
+
+      {/* Microsoft Clarity — optioneel, alleen na toestemming. */}
       {consent === "granted" && (
-        <>
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-            strategy="afterInteractive"
-          />
-          <Script id="ga4-init" strategy="afterInteractive">
-            {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}
-          </Script>
-          <Script id="clarity-init" strategy="afterInteractive">
-            {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_ID}");`}
-          </Script>
-        </>
+        <Script id="clarity-init" strategy="afterInteractive">
+          {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_ID}");`}
+        </Script>
       )}
+
       {open && (
-        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur">
-          <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-slate-600">
-              We gebruiken functionele cookies en — met jouw toestemming — analytische cookies om de
-              site te verbeteren.{" "}
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cookie-title"
+        >
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl sm:p-8">
+            <div className="text-3xl" aria-hidden>
+              🍪
+            </div>
+            <h2 id="cookie-title" className="mt-3 text-xl font-bold text-slate-900">
+              Cookies op Maakjobs
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">
+              We gebruiken Google Analytics om de site te laten werken en te verbeteren. Met jouw
+              toestemming gebruiken we daarnaast Microsoft Clarity voor extra inzicht in het gebruik.{" "}
               <Link href="/cookies" className="font-medium text-brand-700 underline">
                 Meer info
               </Link>
               .
             </p>
-            <div className="flex shrink-0 gap-2">
+            <div className="mt-5 flex flex-col gap-2 sm:flex-row">
               <button
                 onClick={() => choose("denied")}
-                className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                className="order-2 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 sm:order-1"
               >
-                Weigeren
+                Alleen noodzakelijk
               </button>
               <button
                 onClick={() => choose("granted")}
-                className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
+                className="order-1 flex-1 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 sm:order-2"
               >
                 Accepteren
               </button>

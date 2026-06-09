@@ -2,7 +2,7 @@
 // admin (manual/paid premium placements).
 import crypto from "node:crypto";
 import { getDb } from "./db";
-import { sendEmail, esc } from "./email";
+import { sendEmail, esc, alertEmailFooter } from "./email";
 import { SITE } from "./site";
 import { classify, stripHtml } from "./classify";
 import { slugify, toAnnualEUR } from "./format";
@@ -30,12 +30,19 @@ export async function addSubscriber(
   const clean = (email || "").trim().toLowerCase();
   if (!isValidEmail(clean)) return { ok: false, error: "Ongeldig e-mailadres" };
   const freq = frequency === "weekly" ? "weekly" : "daily";
-  getDb()
-    .prepare(
-      `INSERT INTO subscribers (email, filters_json, frequency) VALUES (?,?,?)
-       ON CONFLICT(email) DO UPDATE SET filters_json=excluded.filters_json, frequency=excluded.frequency`,
-    )
-    .run(clean, filters && Object.keys(filters).length ? JSON.stringify(filters) : null, freq);
+  const db = getDb();
+  db.prepare(
+    `INSERT INTO subscribers (email, filters_json, frequency, unsub_token) VALUES (?,?,?,?)
+     ON CONFLICT(email) DO UPDATE SET filters_json=excluded.filters_json, frequency=excluded.frequency`,
+  ).run(
+    clean,
+    filters && Object.keys(filters).length ? JSON.stringify(filters) : null,
+    freq,
+    crypto.randomBytes(16).toString("hex"),
+  );
+  const token = (
+    db.prepare("SELECT unsub_token FROM subscribers WHERE email=?").get(clean) as { unsub_token: string }
+  ).unsub_token;
 
   // Confirmation to the subscriber (best-effort; never blocks the signup).
   await sendEmail({
@@ -46,10 +53,38 @@ export async function addSubscriber(
       <p style="color:#334155">Je ontvangt voortaan ${freq === "weekly" ? "wekelijks" : "dagelijks"} de nieuwste
       technische vacatures in Nederland die bij je passen.</p>
       <p><a href="${SITE.url}/vacatures" style="color:#6d28d9;font-weight:600">Bekijk nu alle vacatures →</a></p>
-      <p style="color:#94a3b8;font-size:12px">${SITE.name} — vacatures voor techniek en de maakindustrie.</p>
+      ${alertEmailFooter(token)}
     </div>`,
   });
   return { ok: true };
+}
+
+/** Look up a subscriber by their unsubscribe/preferences token. */
+export function getSubscriberByToken(
+  token: string,
+): { id: number; email: string; filters_json: string | null; frequency: string } | null {
+  if (!token) return null;
+  return (
+    (getDb()
+      .prepare("SELECT id, email, filters_json, frequency FROM subscribers WHERE unsub_token=?")
+      .get(token) as { id: number; email: string; filters_json: string | null; frequency: string } | undefined) ??
+    null
+  );
+}
+
+/** Update the digest frequency for a subscriber (token-authenticated). */
+export function updateSubscriberFrequency(token: string, frequency: string): boolean {
+  if (!token) return false;
+  const freq = frequency === "weekly" ? "weekly" : "daily";
+  const r = getDb().prepare("UPDATE subscribers SET frequency=? WHERE unsub_token=?").run(freq, token);
+  return Number(r.changes ?? 0) > 0;
+}
+
+/** Remove a subscriber by token (unsubscribe). */
+export function unsubscribeByToken(token: string): boolean {
+  if (!token) return false;
+  const r = getDb().prepare("DELETE FROM subscribers WHERE unsub_token=?").run(token);
+  return Number(r.changes ?? 0) > 0;
 }
 
 export async function addEmployerSubmission(payload: {

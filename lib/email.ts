@@ -1,6 +1,8 @@
 // Transactional email via Resend (https://resend.com). Reads config from the environment
 // at runtime. With no RESEND_API_KEY set it logs a dry-run instead of sending, so local
 // development never needs a key. Never throws - returns a status the caller can ignore.
+import { SITE } from "./site";
+
 const RESEND_URL = "https://api.resend.com/emails";
 
 /** Verified sending identity. The domain MUST be verified in your Resend account.
@@ -18,6 +20,7 @@ export async function sendEmail(opts: {
   html: string;
   from?: string;
   replyTo?: string;
+  headers?: Record<string, string>;
 }): Promise<"sent" | "dry" | "error"> {
   const key = process.env.RESEND_API_KEY;
   const to = Array.isArray(opts.to) ? opts.to : [opts.to];
@@ -37,6 +40,7 @@ export async function sendEmail(opts: {
         subject: opts.subject,
         html: opts.html,
         ...(opts.replyTo ? { reply_to: opts.replyTo } : {}),
+        ...(opts.headers ? { headers: opts.headers } : {}),
       }),
       signal: ctrl.signal,
     });
@@ -60,4 +64,25 @@ export function esc(s: unknown): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+/** Per-subscriber links for managing/unsubscribing an alert (token-authenticated). */
+export function alertLinks(token: string) {
+  const t = encodeURIComponent(token);
+  const manage = `${SITE.url}/vacature-alert/beheer?token=${t}`;
+  return {
+    prefs: manage,
+    unsub: `${manage}&actie=uitschrijven`,
+    oneClick: `${SITE.url}/api/alerts/unsubscribe?token=${t}`, // for the List-Unsubscribe header
+  };
+}
+
+/** Standard footer for alert e-mails: why-you-got-this + preferences + unsubscribe links. */
+export function alertEmailFooter(token: string): string {
+  const l = alertLinks(token);
+  return `<p style="color:#94a3b8;font-size:12px;margin-top:20px">
+    Je ontvangt deze mail omdat je een vacature-alert hebt op ${SITE.name}.<br>
+    <a href="${l.prefs}" style="color:#94a3b8">Voorkeuren aanpassen</a> &middot;
+    <a href="${l.unsub}" style="color:#94a3b8">Uitschrijven</a>
+  </p>`;
 }

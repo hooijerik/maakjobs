@@ -207,7 +207,7 @@ export const COOKIES: LegalDoc = {
   slug: "cookies",
   title: "Cookieverklaring",
   intro: [
-    `${A.brand} gebruikt cookies en vergelijkbare technieken. Functionele cookies zijn altijd actief omdat de site ze nodig heeft; analytische cookies plaatsen we alleen met jouw toestemming.`,
+    `${A.brand} gebruikt cookies en vergelijkbare technieken. Noodzakelijke cookies en Google Analytics zijn altijd actief; aanvullende analytische cookies (Microsoft Clarity) plaatsen we alleen met jouw toestemming.`,
     `Laatst bijgewerkt: ${A.updated}.`,
   ],
   sections: [
@@ -218,19 +218,20 @@ export const COOKIES: LegalDoc = {
       ],
     },
     {
-      h: "2. Noodzakelijke cookies (altijd actief)",
+      h: "2. Altijd actieve cookies",
+      body: [
+        "Deze cookies zijn nodig om de site te laten werken en om het basisgebruik te meten; ze staan altijd aan.",
+      ],
       list: [
-        "maakjobs_consent / mj_consent — onthoudt je cookiekeuze (bewaartermijn ca. 6 maanden).",
+        "mj_consent — onthoudt je cookiekeuze (bewaartermijn ca. 6 maanden).",
         "mj_admin — alleen voor de beheerder, om ingelogd te blijven in het beheer.",
+        "Google Analytics 4 (_ga, _ga_*) — geanonimiseerde bezoekstatistieken om de site te verbeteren. Bewaartermijn tot 2 jaar. Zie het privacybeleid van Google.",
       ],
     },
     {
-      h: "3. Analytische cookies (alleen na toestemming)",
-      body: [
-        "Deze cookies helpen ons de website te verbeteren door geanonimiseerd gebruik te meten. Ze worden pas geplaatst nadat je op 'Accepteren' hebt geklikt.",
-      ],
+      h: "3. Cookies die we pas na toestemming plaatsen",
+      body: ["Deze plaatsen we alleen nadat je op 'Accepteren' hebt geklikt."],
       list: [
-        "Google Analytics 4 (_ga, _ga_*) — bezoekstatistieken. Bewaartermijn tot 2 jaar. Zie het privacybeleid van Google.",
         "Microsoft Clarity (_clck, _clsk, CLID, ANONCHK) — gebruiksstatistieken en heatmaps. Zie het privacybeleid van Microsoft.",
       ],
     },
