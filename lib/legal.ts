@@ -1,18 +1,18 @@
-// Legal copy for Maakjobs: algemene voorwaarden, privacyverklaring, cookieverklaring.
-// Dutch-only board, so the text lives inline (like taxonomy.ts / packages.ts). These are
-// solid templates — have them checked by a jurist and fill in the LEGAL placeholders
-// (KvK, BTW, adres) before relying on them commercially.
+// Legal copy for Maakjobs: advertentievoorwaarden, privacyverklaring, cookieverklaring.
+// Dutch-only board, so the text lives inline (like taxonomy.ts / packages.ts). The
+// advertentievoorwaarden mirror the GTM AI house terms (gtmbanen.nl/advertentievoorwaarden),
+// adapted for Maakjobs. Have them checked by a jurist before relying on them commercially.
 import { SITE } from "./site";
 
-/** Operator / data-controller details. Fill in the bracketed placeholders. */
+/** Operator / data-controller details (GTM AI, the company behind Maakjobs). */
 export const LEGAL = {
   brand: SITE.name, // "Maakjobs"
-  operator: "GTM AI", // handelsnaam van de exploitant — controleer/pas aan
+  operator: "GTM AI",
   email: "info@gtmai.nl",
-  kvk: "[KvK-nummer]",
-  btw: "[BTW-identificatienummer]",
-  address: "[Vestigingsadres]",
-  updated: "8 juni 2026",
+  kvk: "97159751",
+  btw: "NL867933914B01",
+  address: "Willibrordweg 18, 3911 CC Rhenen",
+  updated: "juni 2026",
 };
 
 export interface LegalSection {
@@ -21,7 +21,7 @@ export interface LegalSection {
   list?: string[];
 }
 export interface LegalDoc {
-  slug: "voorwaarden" | "privacy" | "cookies";
+  slug: "advertentievoorwaarden" | "privacy" | "cookies";
   title: string;
   intro: string[];
   sections: LegalSection[];
@@ -29,99 +29,95 @@ export interface LegalDoc {
 
 const A = LEGAL;
 
-export const VOORWAARDEN: LegalDoc = {
-  slug: "voorwaarden",
-  title: "Algemene voorwaarden",
+export const ADVERTENTIEVOORWAARDEN: LegalDoc = {
+  slug: "advertentievoorwaarden",
+  title: "Advertentievoorwaarden",
   intro: [
-    `Deze algemene voorwaarden zijn van toepassing op het gebruik van ${A.brand} (${SITE.url}), een vacatureplatform voor techniek en de maakindustrie, geëxploiteerd door ${A.operator} (KvK ${A.kvk}, BTW ${A.btw}), hierna "${A.brand}".`,
-    `Laatst bijgewerkt: ${A.updated}.`,
+    `Deze voorwaarden gelden voor elke betaalde plaatsing op ${A.brand} (maakjobs.nl), een dienst van ${A.operator}, KvK ${A.kvk}, BTW ${A.btw}, ${A.address}.`,
+    `Versie ${A.updated}.`,
   ],
   sections: [
     {
       h: "1. Definities",
-      list: [
-        `${A.brand}: het vacatureplatform en de daarbij horende diensten.`,
-        "Bezoeker: iedere gebruiker die de website bezoekt of een vacature-alert instelt.",
-        "Werkgever / Adverteerder: een (rechts)persoon die een vacature aanbiedt of een premium-plaatsing afneemt.",
-        "Vacature: een vacaturevermelding op het platform.",
-        "Premium-plaatsing: een betaalde, uitgelichte vacature- of bedrijfsplaatsing.",
+      body: [
+        `"${A.brand}" is de vacaturebank op maakjobs.nl, een dienst van ${A.operator}, KvK ${A.kvk}, BTW ${A.btw}, ${A.address}. "Adverteerder" is de partij die een betaalde plaatsing afneemt. "Plaatsing" is een premium vacature en/of een uitgelicht bedrijfsprofiel.`,
       ],
     },
     {
       h: "2. Toepasselijkheid",
       body: [
-        `Deze voorwaarden gelden voor elk gebruik van ${A.brand} en voor elke overeenkomst met een Adverteerder. Afwijkingen gelden alleen als ze schriftelijk zijn overeengekomen. Inkoop- of andere voorwaarden van de Adverteerder worden uitdrukkelijk van de hand gewezen.`,
+        "Deze voorwaarden zijn van toepassing op elke betaalde plaatsing en gaan vóór eventuele inkoop- of advertentievoorwaarden van de adverteerder.",
       ],
     },
     {
-      h: "3. De dienst",
+      h: "3. Totstandkoming",
       body: [
-        `${A.brand} is een vacaturebank. Een deel van de vacatures wordt geautomatiseerd verzameld uit openbare bronnen en vacaturesystemen (ATS) van werkgevers; daarnaast kunnen werkgevers zelf vacatures aanleveren. ${A.brand} bemiddelt niet bij arbeid en is geen partij bij sollicitaties, arbeidsovereenkomsten of afspraken tussen Bezoeker en Werkgever.`,
-        `${A.brand} spant zich in voor een actueel en correct aanbod, maar staat niet in voor de juistheid, volledigheid of beschikbaarheid van vacatures van derden.`,
+        `Een overeenkomst komt tot stand na schriftelijke bevestiging of offerte door ${A.brand} en akkoord van de adverteerder. Een plaatsing start na ontvangst van betaling, tenzij schriftelijk anders is afgesproken.`,
       ],
     },
     {
-      h: "4. Gratis plaatsing",
+      h: "4. Tarieven & betaling",
       body: [
-        `De standaardplaatsing van een vacature is gratis. ${A.brand} beoordeelt elke aanlevering en mag zonder opgaaf van reden een vacature weigeren, aanpassen of verwijderen, bijvoorbeeld bij onjuiste, misleidende, discriminerende of onrechtmatige inhoud, of bij vacatures die niet binnen de niche (techniek/maakindustrie) passen.`,
+        `Prijzen zijn in euro's en exclusief 21% btw. Voor zakelijke afnemers in België wordt de btw verlegd (intracommunautaire dienst). De betaaltermijn is 14 dagen. Bij niet-tijdige betaling mag ${A.brand} de plaatsing opschorten of verwijderen.`,
       ],
     },
     {
-      h: "5. Premium-plaatsingen (betaald)",
+      h: "5. Looptijd",
       body: [
-        "Een premium-plaatsing geeft extra zichtbaarheid (zoals een uitgelichte positie en/of vermelding op de homepage) gedurende de overeengekomen looptijd. De inhoud en looptijd staan in het aanbod of de offerte.",
-        "Tarieven zijn op aanvraag en worden vooraf per offerte bevestigd. Genoemde bedragen zijn exclusief btw, tenzij anders vermeld. Facturatie verloopt per factuur met de wettelijke betaaltermijn van 14 dagen, tenzij anders overeengekomen. Online betalingen verlopen, indien aangeboden, via onze betaaldienstverlener Stripe.",
-        `Een premium-plaatsing gaat in na ontvangst van betaling of na schriftelijke bevestiging. Bij niet-tijdige betaling mag ${A.brand} de plaatsing opschorten of beëindigen.`,
+        "De plaatsing loopt gedurende de overeengekomen periode (bijvoorbeeld 30 of 60 dagen, of per maand/kwartaal/jaar) en eindigt daarna automatisch. Verlenging gebeurt op aanvraag tegen het dan geldende tarief.",
       ],
     },
     {
-      h: "6. Annulering en terugbetaling",
+      h: "6. Inhoud & verantwoordelijkheid",
       body: [
-        "Overeenkomsten met Adverteerders zijn zakelijke overeenkomsten (B2B); het wettelijke herroepingsrecht voor consumenten is niet van toepassing. Een reeds gestarte premium-plaatsing wordt niet terugbetaald. Annulering vóór aanvang kan kosteloos schriftelijk, mits de plaatsing nog niet live staat.",
-        `Wordt een plaatsing door toedoen van ${A.brand} niet (volledig) geleverd, dan wordt het betrokken bedrag naar rato gecrediteerd.`,
+        "De adverteerder staat in voor de juistheid en rechtmatigheid van de aangeleverde inhoud (vacaturetekst, logo, banner) en garandeert dat het om echte, actuele vacatures gaat en dat hij over de benodigde rechten beschikt. Inhoud mag niet misleidend, discriminerend of in strijd met de wet zijn.",
       ],
     },
     {
-      h: "7. Verplichtingen van de Adverteerder",
+      h: "7. Redactioneel recht",
       body: [
-        "De Adverteerder staat ervoor in dat aangeleverde vacatures juist en niet misleidend zijn, voldoen aan toepasselijke wet- en regelgeving (waaronder gelijke-behandelingswetgeving) en geen inbreuk maken op rechten van derden. De Adverteerder beschikt over de benodigde rechten op aangeleverde teksten, logo's en beeldmateriaal en verleent ${A.brand} het recht deze voor de plaatsing te gebruiken.",
+        `${A.brand} mag plaatsingen weigeren, redactioneel inkorten of verwijderen die niet passen bij het technische / maakindustrie-profiel van het platform of die in strijd zijn met deze voorwaarden, zonder restitutieplicht bij schending door de adverteerder.`,
       ],
     },
     {
-      h: "8. Intellectueel eigendom",
+      h: "8. Geen resultaatsgarantie",
       body: [
-        `Alle rechten op het platform, de vormgeving, de classificatie en samengestelde overzichten berusten bij ${A.brand}. Zonder voorafgaande schriftelijke toestemming mag de inhoud niet systematisch worden overgenomen, geschraapt of hergebruikt.`,
+        `${A.brand} spant zich in voor zichtbaarheid, maar geeft geen garantie op een aantal weergaven, kliks of sollicitanten.`,
       ],
     },
     {
-      h: "9. Aansprakelijkheid",
+      h: "9. Annulering & restitutie",
       body: [
-        `${A.brand} is niet aansprakelijk voor schade die voortvloeit uit het gebruik van het platform of uit (de inhoud van) vacatures van derden, behoudens opzet of bewuste roekeloosheid. Iedere aansprakelijkheid is beperkt tot het bedrag dat de Adverteerder in de betreffende overeenkomst heeft betaald. ${A.brand} is nooit aansprakelijk voor indirecte schade of gevolgschade.`,
+        "Annuleren kan kosteloos tot publicatie. Na publicatie is geen restitutie mogelijk, omdat de dienst dan is geleverd.",
       ],
     },
     {
-      h: "10. Melding en verwijdering",
+      h: "10. Beschikbaarheid",
       body: [
-        `Vind je dat een vacature onjuist of onrechtmatig is, of staan jouw gegevens ten onrechte in een vacature? Meld dit via ${A.email}; ${A.brand} verwijdert of corrigeert onrechtmatige of onjuiste content zo snel mogelijk.`,
+        `${A.brand} streeft naar continue beschikbaarheid maar is niet aansprakelijk voor tijdelijke onderbrekingen of overmacht. Dagen die door een storing verloren gaan, worden waar redelijk gecompenseerd in looptijd.`,
       ],
     },
     {
-      h: "11. Privacy",
+      h: "11. Aansprakelijkheid",
       body: [
-        "Op de verwerking van persoonsgegevens is de privacyverklaring van toepassing. Het gebruik van cookies staat beschreven in de cookieverklaring.",
+        `De aansprakelijkheid van ${A.brand} is beperkt tot het voor de betreffende plaatsing betaalde bedrag. Indirecte of gevolgschade is uitgesloten.`,
       ],
     },
     {
-      h: "12. Wijzigingen",
+      h: "12. Privacy & transparantie",
       body: [
-        `${A.brand} mag deze voorwaarden wijzigen. De actuele versie staat altijd op ${SITE.url}/voorwaarden. Op lopende overeenkomsten gelden de voorwaarden zoals die bij het sluiten golden.`,
+        'Persoonsgegevens worden verwerkt conform het privacy- en cookiebeleid. Betaalde plaatsingen worden herkenbaar gelabeld als "Uitgelicht".',
       ],
     },
     {
       h: "13. Toepasselijk recht",
       body: [
-        `Op deze voorwaarden en alle overeenkomsten is Nederlands recht van toepassing. Geschillen worden voorgelegd aan de bevoegde rechter in het arrondissement van de vestigingsplaats van ${A.operator}.`,
+        "Op deze voorwaarden is Nederlands recht van toepassing. Geschillen worden voorgelegd aan de bevoegde rechter van de Rechtbank Midden-Nederland.",
       ],
+    },
+    {
+      h: "Vragen?",
+      body: [`Vragen over deze voorwaarden? Mail ${A.email}.`],
     },
   ],
 };
@@ -137,7 +133,7 @@ export const PRIVACY: LegalDoc = {
     {
       h: "1. Verwerkingsverantwoordelijke",
       body: [
-        `${A.operator} (handelsnaam ${A.brand}), KvK ${A.kvk}, ${A.address}. Vragen over privacy? Mail naar ${A.email}.`,
+        `${A.operator} (handelsnaam ${A.brand}), KvK ${A.kvk}, BTW ${A.btw}, ${A.address}. Vragen over privacy? Mail naar ${A.email}.`,
       ],
     },
     {
@@ -147,13 +143,13 @@ export const PRIVACY: LegalDoc = {
         "Werkgevers-inzendingen: bedrijfsnaam, contact-e-mail en vacaturegegevens, om je aanvraag te behandelen en contact op te nemen. Grondslag: uitvoering van de overeenkomst en/of gerechtvaardigd belang.",
         "Premium-plaatsingen en facturatie: bedrijfs- en factuurgegevens, om de overeenkomst uit te voeren en te voldoen aan onze administratie- en bewaarplicht. Grondslag: uitvoering overeenkomst en wettelijke verplichting.",
         "Vacaturegegevens uit openbare bronnen: vacatures worden verzameld uit openbare bronnen en ATS-systemen. Deze bevatten doorgaans geen persoonsgegevens van sollicitanten; soms een contactpersoon. Grondslag: gerechtvaardigd belang. Verwijdering kan op verzoek.",
-        "Websitegebruik (analytics): geanonimiseerde/gepseudonimiseerde gebruiksstatistieken om de website te verbeteren. Grondslag: jouw toestemming via cookies.",
+        "Websitegebruik (analytics): geanonimiseerde gebruiksstatistieken om de website te verbeteren. Google Analytics is altijd actief; Microsoft Clarity plaatsen we alleen met jouw toestemming via cookies.",
       ],
     },
     {
       h: "3. Cookies",
       body: [
-        `${A.brand} gebruikt functionele en — na jouw toestemming — analytische cookies. Welke cookies dat zijn, lees je in de cookieverklaring (${SITE.url}/cookies).`,
+        `${A.brand} gebruikt noodzakelijke cookies en Google Analytics, en — na jouw toestemming — Microsoft Clarity. Welke cookies dat zijn, lees je in de cookieverklaring (${SITE.url}/cookies).`,
       ],
     },
     {
@@ -161,7 +157,7 @@ export const PRIVACY: LegalDoc = {
       body: ["We delen gegevens alleen met dienstverleners die voor ons gegevens verwerken, op basis van een verwerkersovereenkomst:"],
       list: [
         "Resend — verzenden van e-mails (alerts en bevestigingen).",
-        "Google Ireland Ltd. — Google Analytics 4 (websitestatistieken), alleen na toestemming.",
+        "Google Ireland Ltd. — Google Analytics 4 (websitestatistieken).",
         "Microsoft Ireland — Microsoft Clarity (gebruiksstatistieken), alleen na toestemming.",
         "Stripe — verwerking van online betalingen voor premium-plaatsingen (indien van toepassing).",
         "Onze hostingpartner — het draaien en opslaan van de applicatie en database.",
@@ -196,9 +192,7 @@ export const PRIVACY: LegalDoc = {
     },
     {
       h: "9. Wijzigingen",
-      body: [
-        `We kunnen deze privacyverklaring aanpassen. De actuele versie staat op ${SITE.url}/privacy.`,
-      ],
+      body: [`We kunnen deze privacyverklaring aanpassen. De actuele versie staat op ${SITE.url}/privacy.`],
     },
   ],
 };
@@ -249,7 +243,7 @@ export const COOKIES: LegalDoc = {
 };
 
 export const LEGAL_DOCS: Record<string, LegalDoc> = {
-  voorwaarden: VOORWAARDEN,
+  advertentievoorwaarden: ADVERTENTIEVOORWAARDEN,
   privacy: PRIVACY,
   cookies: COOKIES,
 };

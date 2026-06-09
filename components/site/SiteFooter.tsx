@@ -77,7 +77,7 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dict }) {
             </p>
           </div>
           <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-400">
-            <Link href={L("/voorwaarden")} className="hover:text-brand-700">{f.terms}</Link>
+            <Link href={L("/advertentievoorwaarden")} className="hover:text-brand-700">{f.terms}</Link>
             <Link href={L("/privacy")} className="hover:text-brand-700">{f.privacy}</Link>
             <Link href={L("/cookies")} className="hover:text-brand-700">{f.cookies}</Link>
             <CookieSettingsLink className="hover:text-brand-700">{f.cookiePrefs}</CookieSettingsLink>

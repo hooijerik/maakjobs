@@ -39,7 +39,7 @@ export const nl = {
     locations: "Locaties",
     cityLink: (label: string) => `technische vacatures ${label}`,
     remoteJobs: "Remote technische vacatures",
-    terms: "Algemene voorwaarden",
+    terms: "Advertentievoorwaarden",
     privacy: "Privacy",
     cookies: "Cookies",
     cookiePrefs: "Cookievoorkeuren",

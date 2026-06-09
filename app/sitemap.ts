@@ -34,7 +34,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/vacature-alert",
   ];
   for (const p of staticPaths) add(p, { changeFrequency: "daily" });
-  for (const p of ["/voorwaarden", "/privacy", "/cookies"]) add(p, { changeFrequency: "monthly" });
+  for (const p of ["/advertentievoorwaarden", "/privacy", "/cookies"]) add(p, { changeFrequency: "monthly" });
 
   for (const c of CATEGORIES) add(`/vacatures/categorie/${c.slug}`);
   for (const s of SENIORITY) add(`/vacatures/niveau/${s.slug}`);
