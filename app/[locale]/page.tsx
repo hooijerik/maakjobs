@@ -57,8 +57,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
             </form>
           </div>
 
-          {/* Categories: wrap on mobile, single row on desktop */}
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-2 lg:flex-nowrap">
+          {/* Categories: always wrap so the (long) trade labels never overflow the screen */}
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
             {sortedCats.map((c) => (
               <Link
                 key={c.slug}
